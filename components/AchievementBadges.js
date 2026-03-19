@@ -1,4 +1,9 @@
 export default function AchievementBadges({ achievements }) {
+  const formattedBiggestMargin =
+    achievements.biggestStatWin.margin > 0
+      ? Number(achievements.biggestStatWin.margin.toFixed(2))
+      : 0;
+
   const badgeItems = [
     {
       id: "streak",
@@ -10,7 +15,7 @@ export default function AchievementBadges({ achievements }) {
       label: "Biggest Stat Win",
       value:
         achievements.biggestStatWin.margin > 0
-          ? `+${achievements.biggestStatWin.margin} ${achievements.biggestStatWin.statLabel}`
+          ? `+${formattedBiggestMargin} ${achievements.biggestStatWin.statLabel}`
           : "Not yet"
     },
     {

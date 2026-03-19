@@ -74,6 +74,9 @@ export default function PlayerCardV2({
   hidden = false,
   highlighted = false,
   selectedStat = null,
+  onStatSelect = null,
+  isSelectable = false,
+  disabled = false,
   outcome = null,
   burstKey = 0
 }) {
@@ -87,7 +90,7 @@ export default function PlayerCardV2({
 
   return (
     <motion.article
-      whileHover={{ y: -6, rotateZ: -0.35, scale: 1.015 }}
+      whileHover={{}}
       transition={{ type: "spring", stiffness: 230, damping: 22 }}
       className={[
         "relative w-full max-w-sm overflow-hidden rounded-[30px] border p-5 text-white",
@@ -105,7 +108,7 @@ export default function PlayerCardV2({
 
       <div className="relative z-10">
         {hidden ? (
-          <div className={["flex min-h-[350px] flex-col items-center justify-center rounded-[24px] border text-center", theme.hiddenWrap].join(" ")}>
+          <div className={["flex min-h-[472px] flex-col items-center justify-center rounded-[24px] border text-center", theme.hiddenWrap].join(" ")}>
             <div className={["rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.35em]", theme.hiddenChip].join(" ")}>
               Premium Pack
             </div>
@@ -132,11 +135,18 @@ export default function PlayerCardV2({
 
             <div className="flex flex-col gap-3">
               {items.map((item) => (
-                <div
+                <button
                   key={item.label}
+                  type="button"
+                  onClick={() => onStatSelect?.(item.key)}
+                  disabled={!isSelectable || disabled}
                   className={[
-                    "flex min-h-[88px] items-center justify-between gap-4 rounded-[22px] border px-4 py-4",
-                    statStyles[item.label][selectedStat === item.key ? "active" : "base"]
+                    "flex min-h-[88px] w-full items-center justify-between gap-4 rounded-[22px] border px-4 py-4 text-left transition",
+                    statStyles[item.label][selectedStat === item.key ? "active" : "base"],
+                    isSelectable && !disabled
+                      ? "cursor-pointer hover:border-white/35"
+                      : "cursor-default",
+                    disabled ? "opacity-70" : ""
                   ].join(" ")}
                 >
                   <p className="text-[11px] uppercase tracking-[0.22em] text-slate-300/72">
@@ -149,7 +159,7 @@ export default function PlayerCardV2({
                         : "--"
                       : formatRawStat(item.label, item.value)}
                   </p>
-                </div>
+                </button>
               ))}
             </div>
           </>

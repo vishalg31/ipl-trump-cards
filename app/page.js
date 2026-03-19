@@ -329,35 +329,41 @@ export default function HomePage() {
         </div>
       ) : null}
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <section className="overflow-hidden rounded-[32px] border border-white/10 bg-black/20 p-6 backdrop-blur md:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
-              <p className="text-sm uppercase tracking-[0.35em] text-crease">Real IPL Data. Real Matchups.</p>
-              <h1 className="mt-3 text-4xl font-black uppercase leading-none sm:text-5xl">
+      <div
+        className={[
+          "mx-auto flex w-full max-w-7xl flex-col gap-6",
+          hasStarted ? "min-h-[calc(100vh-3rem)] items-center justify-center" : ""
+        ].join(" ")}
+      >
+        {hasStarted ? (
+          <div className="w-full text-center">
+            <p className="text-xs uppercase tracking-[0.34em] text-crease sm:text-sm">
+              IPL Trump Cards
+            </p>
+          </div>
+        ) : null}
+
+        {!hasStarted ? (
+          <>
+            <section className="overflow-hidden rounded-[24px] border border-white/10 bg-black/20 p-3 backdrop-blur md:p-4">
+              <div className="flex flex-col gap-2">
+                <div className="max-w-2xl">
+              <p className="text-[10px] uppercase tracking-[0.3em] text-crease sm:text-xs">Real IPL Data. Real Matchups.</p>
+              <h1 className="mt-2 text-2xl font-black uppercase leading-none sm:text-3xl">
                 IPL Trump Cards
               </h1>
-              <p className="mt-3 text-base font-semibold text-white sm:text-lg">Can you beat the CPU? ↓</p>
-              <p className="mt-4 max-w-xl text-sm leading-6 text-mist sm:text-base">
-                A fast, stat-driven cricket card game powered by real IPL batting data from the
-                2024-2025 seasons.
+              <p className="mt-2 text-sm font-semibold text-white sm:text-base">Can you beat the CPU? ↓</p>
+              <p className="mt-2 max-w-xl text-xs leading-5 text-mist sm:text-sm">
+                A fast, stat-driven cricket card game powered by IPL batting data from 2024-2025.
               </p>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-mist sm:text-base">
+              <p className="mt-2 max-w-xl text-xs leading-5 text-mist sm:text-sm">
                 Pick your stat, reveal the CPU card, and race to 10 round wins.
               </p>
-              <p className="mt-4 text-sm font-semibold tracking-[0.12em] text-crease">Made by Vishal</p>
-            </div>
-
-            <div className="w-full max-w-md rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.46))] p-5 backdrop-blur-sm">
-              <p className="text-xs uppercase tracking-[0.3em] text-crease">How It Works</p>
-              <p className="mt-4 text-sm leading-7 text-mist">
-                Each round, you and the CPU are dealt one random player. Choose a stat: Strike
-                Rate, Boundary Rate, Average, or Impact. The higher stat wins the round. First to
-                10 points wins the match.
-              </p>
-            </div>
-          </div>
-        </section>
+                </div>
+              </div>
+            </section>
+          </>
+        ) : null}
 
         {hasStarted ? (
           <GameBoard
@@ -427,31 +433,37 @@ export default function HomePage() {
           </section>
         )}
 
-        <section className="grid gap-4 rounded-[28px] border border-white/10 bg-black/20 p-6 backdrop-blur md:grid-cols-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-crease">Gameplay loop</p>
-            <p className="mt-3 text-sm leading-6 text-mist">
-              Every round is a new matchup. No fixed decks, no repetition - just fast, dynamic
-              gameplay driven by real player stats.
-            </p>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-crease">Final direction</p>
-            <p className="mt-3 text-sm leading-6 text-mist">
-              This is the final gameplay experience: one board, one loop, fully focused.
-            </p>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-crease">Next steps</p>
-            <p className="mt-3 text-sm leading-6 text-mist">
-              With the real IPL dataset now integrated, the focus moves to multi-player gameplay
-            </p>
-          </div>
-        </section>
+        {!hasStarted ? (
+          <>
+            <section className="overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(2,6,23,0.72),rgba(15,23,42,0.48))] p-3 shadow-[0_18px_48px_rgba(2,6,23,0.22)] backdrop-blur md:p-4">
+              <div className="grid gap-3 md:grid-cols-3">
+                <div className="rounded-[22px] border border-cyan-200/10 bg-[linear-gradient(180deg,rgba(34,211,238,0.08),rgba(255,255,255,0.03))] p-5">
+                  <p className="text-xs uppercase tracking-[0.25em] text-cyan-100/75">Gameplay loop</p>
+                  <p className="mt-3 text-sm leading-6 text-mist">
+                    Every round is a new matchup. No fixed decks, no repetition - just fast, dynamic
+                    gameplay driven by real player stats.
+                  </p>
+                </div>
+                <div className="rounded-[22px] border border-amber-200/10 bg-[linear-gradient(180deg,rgba(250,204,21,0.08),rgba(255,255,255,0.03))] p-5">
+                  <p className="text-xs uppercase tracking-[0.25em] text-amber-100/75">Final direction</p>
+                  <p className="mt-3 text-sm leading-6 text-mist">
+                    This is the final gameplay experience: one board, one loop, fully focused.
+                  </p>
+                </div>
+                <div className="rounded-[22px] border border-fuchsia-200/10 bg-[linear-gradient(180deg,rgba(217,70,239,0.08),rgba(255,255,255,0.03))] p-5">
+                  <p className="text-xs uppercase tracking-[0.25em] text-fuchsia-100/75">Next steps</p>
+                  <p className="mt-3 text-sm leading-6 text-mist">
+                    With the real IPL dataset now integrated, the focus moves to multi-player gameplay
+                  </p>
+                </div>
+              </div>
+            </section>
 
-        <footer className="pb-2 text-center text-sm text-mist">
-          Built with Next.js, Tailwind CSS, and Framer Motion.
-        </footer>
+            <footer className="pb-2 text-center text-sm text-mist">
+              Built with Next.js, Tailwind CSS, and Framer Motion.
+            </footer>
+          </>
+        ) : null}
       </div>
     </main>
   );

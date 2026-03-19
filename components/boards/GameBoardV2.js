@@ -6,13 +6,6 @@ import StreakToast from "@/components/StreakToast";
 import PlayerCardV2 from "@/components/cards/PlayerCardV2";
 import RoundResult from "@/components/RoundResult";
 
-const statLabels = [
-  { key: "strike_rate", label: "Strike Rate" },
-  { key: "boundary_rate", label: "Boundary Rate" },
-  { key: "consistency", label: "Average" },
-  { key: "impact_score", label: "Impact Score" }
-];
-
 export default function GameBoardV2({
   playerName,
   userPlayer,
@@ -48,7 +41,6 @@ export default function GameBoardV2({
   return (
     <motion.section
       animate={{
-        scale: dramaticRoundActive && isResolving ? 1.015 : 1,
         y: dramaticRoundActive && isResolving ? -4 : 0
       }}
       transition={{ duration: dramaticRoundActive ? 0.8 : 0.3, ease: "easeOut" }}
@@ -180,37 +172,52 @@ export default function GameBoardV2({
           </motion.div>
         ) : null}
 
-        <div className="grid gap-8 xl:grid-cols-[1fr_auto_1fr] xl:items-center">
+        <div className="grid gap-5 xl:grid-cols-[22rem_200px_22rem] xl:items-center xl:justify-center xl:gap-5">
           <motion.div
             key={`user-v2-${userPlayer?.name || "empty"}-${userDeckCount}`}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
+            className="flex justify-center xl:justify-start"
           >
-            <p className="mb-3 text-center text-xs uppercase tracking-[0.28em] text-slate-300/70 xl:text-left">
-              Current Round Card
-            </p>
-            {userPlayer ? (
-              <PlayerCardV2
-                name={userPlayer.name}
-                stats={userPlayer}
-                variant="user"
-                hidden={false}
-                highlighted={roundWinner === "user"}
-                selectedStat={selectedStat}
-                outcome={userCardOutcome}
-                burstKey={`user-${effectKey}`}
-              />
-            ) : (
-              <div className="flex min-h-[360px] w-full max-w-sm items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-sm text-slate-300/70">
-                No cards left
-              </div>
-            )}
+            <div className="w-full max-w-sm xl:w-[22rem] xl:max-w-[22rem]">
+              <p className="mb-3 text-center text-xs uppercase tracking-[0.28em] text-slate-300/70 xl:text-left">
+                Tap A Stat On Your Card
+              </p>
+              {userPlayer ? (
+                <PlayerCardV2
+                  name={userPlayer.name}
+                  stats={userPlayer}
+                  variant="user"
+                  hidden={false}
+                  highlighted={roundWinner === "user"}
+                  selectedStat={selectedStat}
+                  onStatSelect={onStatSelect}
+                  isSelectable={!isResolving && !gameOver}
+                  disabled={isResolving || gameOver}
+                  outcome={userCardOutcome}
+                  burstKey={`user-${effectKey}`}
+                />
+              ) : (
+                <div className="flex min-h-[360px] w-full max-w-sm items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-sm text-slate-300/70">
+                  No cards left
+                </div>
+              )}
+            </div>
           </motion.div>
 
-          <div className="flex flex-col items-center justify-center gap-4">
-            <div className="rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.12),rgba(255,255,255,0.06))] px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-amber-50">
-              VS
+          <div className="order-3 flex flex-col items-center justify-center gap-4 xl:order-none">
+            <div className="w-full max-w-[200px] rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(15,23,42,0.55))] px-5 py-6 text-center shadow-[0_18px_40px_rgba(15,23,42,0.28)]">
+              <p className="text-[11px] uppercase tracking-[0.35em] text-amber-100/70">Matchup</p>
+              <div className="mt-4 rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.14),rgba(255,255,255,0.05))] px-5 py-3 text-lg font-black uppercase tracking-[0.35em] text-amber-50">
+                VS
+              </div>
+              <p className="mt-4 text-xs uppercase tracking-[0.24em] text-slate-300/70">
+                Tap A Stat On Your Card
+              </p>
+              <p className="mt-2 text-sm leading-6 text-slate-300/72">
+                The CPU card reveals after your selection.
+              </p>
             </div>
 
             {roundWinner === "draw" ? (
@@ -224,36 +231,6 @@ export default function GameBoardV2({
             ) : null}
 
             <RoundResult roundWinner={roundWinner} dramatic={dramaticRoundActive && Boolean(roundWinner)} />
-
-            <div className="w-full max-w-xs rounded-3xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.42))] p-4 backdrop-blur-sm">
-              <p className="text-center text-xs uppercase tracking-[0.24em] text-amber-100/75">
-                Choose Your Category
-              </p>
-
-              <div className="mt-4 grid gap-3">
-                {statLabels.map((stat) => {
-                  const isActive = selectedStat === stat.key;
-
-                  return (
-                    <button
-                      key={stat.key}
-                      type="button"
-                      onClick={() => onStatSelect(stat.key)}
-                      disabled={isResolving || gameOver}
-                      className={[
-                        "rounded-2xl border px-4 py-3 text-left text-sm font-medium transition",
-                        isActive
-                          ? "border-amber-200/50 bg-[linear-gradient(135deg,rgba(250,204,21,0.18),rgba(255,255,255,0.06))] text-amber-50"
-                          : "border-white/10 bg-slate-900/70 text-slate-200 hover:border-amber-100/30 hover:bg-slate-800",
-                        "disabled:cursor-not-allowed disabled:opacity-50"
-                      ].join(" ")}
-                    >
-                      {stat.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
 
             {gameOver && !finalChampion ? (
               <div className="w-full max-w-xs rounded-3xl border border-amber-200/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.72))] p-5 text-center shadow-[0_20px_45px_rgba(15,23,42,0.4)]">
@@ -284,32 +261,34 @@ export default function GameBoardV2({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
+            className="order-2 flex justify-center xl:order-none xl:justify-end"
           >
-            <p className="mb-3 text-center text-xs uppercase tracking-[0.28em] text-slate-300/70 xl:text-left">
-              Current Round Card
-            </p>
-            <motion.div
-              animate={{ rotateY: cpuRevealed ? 0 : 180 }}
-              transition={{ duration: dramaticRoundActive ? 1.05 : 0.45, ease: "easeInOut" }}
-              style={{ transformStyle: "preserve-3d" }}
-            >
-              {cpuPlayer ? (
-                <PlayerCardV2
-                  name={cpuPlayer.name}
-                  stats={cpuPlayer}
-                  variant="cpu"
-                  hidden={!cpuRevealed}
-                  highlighted={roundWinner === "cpu"}
-                  selectedStat={selectedStat}
-                  outcome={cpuCardOutcome}
-                  burstKey={`cpu-${effectKey}`}
-                />
-              ) : (
-                <div className="flex min-h-[360px] w-full max-w-sm items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-sm text-slate-300/70">
-                  No cards left
-                </div>
-              )}
-            </motion.div>
+            <div className="w-full max-w-sm xl:w-[22rem] xl:max-w-[22rem]">
+              <p className="mb-3 text-center text-xs uppercase tracking-[0.28em] text-slate-300/70 xl:text-left">
+                CPU Card
+              </p>
+              <motion.div
+                animate={{ opacity: cpuRevealed ? 1 : 1 }}
+                transition={{ duration: dramaticRoundActive ? 0.8 : 0.3, ease: "easeOut" }}
+              >
+                {cpuPlayer ? (
+                  <PlayerCardV2
+                    name={cpuPlayer.name}
+                    stats={cpuPlayer}
+                    variant="cpu"
+                    hidden={!cpuRevealed}
+                    highlighted={roundWinner === "cpu"}
+                    selectedStat={selectedStat}
+                    outcome={cpuCardOutcome}
+                    burstKey={`cpu-${effectKey}`}
+                  />
+                ) : (
+                  <div className="flex min-h-[360px] w-full max-w-sm items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-sm text-slate-300/70">
+                    No cards left
+                  </div>
+                )}
+              </motion.div>
+            </div>
           </motion.div>
         </div>
 
