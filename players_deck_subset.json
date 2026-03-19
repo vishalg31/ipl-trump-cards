@@ -1,0 +1,32 @@
+[
+  {
+    "name":"V Kohli",
+    "runs":181,
+    "balls":128,
+    "matches":3,
+    "strike_rate":100.0,
+    "boundary_rate":72.46,
+    "consistency":100.0,
+    "impact_score":100.0
+  },
+  {
+    "name":"S Dhawan",
+    "runs":137,
+    "balls":103,
+    "matches":3,
+    "strike_rate":61.12,
+    "boundary_rate":100.0,
+    "consistency":18.52,
+    "impact_score":65.41
+  },
+  {
+    "name":"B Sai Sudharsan",
+    "runs":127,
+    "balls":106,
+    "matches":3,
+    "strike_rate":0.0,
+    "boundary_rate":0.0,
+    "consistency":0.0,
+    "impact_score":0.0
+  }
+]
