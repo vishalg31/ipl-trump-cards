@@ -247,7 +247,8 @@ export default function HomePage() {
 
   const userCardOutcome =
     roundWinner === "user" ? "win" : roundWinner === "cpu" ? "loss" : roundWinner === "draw" ? "draw" : null;
-  const cpuCardOutcome = roundWinner === "draw" ? "draw" : null;
+  const cpuCardOutcome =
+    roundWinner === "cpu" ? "win" : roundWinner === "user" ? "loss" : roundWinner === "draw" ? "draw" : null;
   const finalChampion = showChampionOverlay;
   const userNearLoss = userScore === 9;
   const cpuNearLoss = cpuScore === 9;
@@ -352,7 +353,7 @@ export default function HomePage() {
               <h1 className="mt-2 text-2xl font-black uppercase leading-none sm:text-3xl">
                 IPL Trump Cards
               </h1>
-              <p className="mt-2 text-sm font-semibold text-white sm:text-base">Can you beat the CPU? ↓</p>
+              <p className="mt-2 text-sm font-semibold text-white sm:text-base">Can you beat the CPU? â†“</p>
               <p className="mt-2 max-w-xl text-xs leading-5 text-mist sm:text-sm">
                 A fast, stat-driven cricket card game powered by IPL batting data from 2024-2025.
               </p>

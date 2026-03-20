@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import AchievementBadges from "@/components/AchievementBadges";
 import CelebrationBurst from "@/components/CelebrationBurst";
 import ChampionOverlay from "@/components/ChampionOverlay";
@@ -45,7 +45,8 @@ export default function GameBoardV2({
       }}
       transition={{ duration: dramaticRoundActive ? 0.8 : 0.3, ease: "easeOut" }}
       className={[
-        "relative overflow-hidden rounded-[32px] border bg-[linear-gradient(180deg,#18181b_0%,#0f172a_42%,#111827_100%)] px-4 py-6 text-white shadow-[0_24px_60px_rgba(15,23,42,0.5)] sm:px-6 lg:px-8",
+        "relative flex w-full xl:w-auto flex-col justify-between overflow-hidden border bg-[linear-gradient(180deg,#18181b_0%,#0f172a_42%,#111827_100%)] px-3 py-4 text-white sm:rounded-[32px] sm:px-6 sm:py-6 lg:px-8",
+        "min-h-[calc(100dvh-2rem)] rounded-[24px] sm:min-h-0 sm:shadow-[0_24px_60px_rgba(15,23,42,0.5)]",
         dramaticRoundActive
           ? "border-fuchsia-300/30 shadow-[0_0_60px_rgba(217,70,239,0.12),0_24px_60px_rgba(15,23,42,0.5)]"
           : "border-amber-200/15"
@@ -70,46 +71,28 @@ export default function GameBoardV2({
       ) : null}
 
       <div className="relative z-10">
-        <div className="mb-8 flex flex-col items-center justify-between gap-4 text-center lg:flex-row lg:text-left">
+        <div className="mb-4 flex flex-col items-center justify-between gap-3 text-center sm:mb-8 lg:flex-row lg:text-left">
           <div>
-            <p className="text-xs uppercase tracking-[0.35em] text-amber-100/70">
+            <p className="hidden text-xs uppercase tracking-[0.35em] text-amber-100/70 sm:block">
               Trading Card Arena
             </p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
-              {playerName} vs CPU
+            <h2 className="text-xl font-semibold tracking-tight sm:mt-2 sm:text-4xl">
+              {playerName} <span className="text-slate-500">vs</span> CPU
             </h2>
-            <p className="mt-3 text-sm text-slate-200/75">
+            <p className="hidden mt-3 text-sm text-slate-200/75 sm:block">
               Win rounds to reach 10 points before the CPU.
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-3 text-sm">
-            <div
-              className={[
-                "rounded-full border border-white/10 bg-white/5 px-4 py-2 text-slate-100/85",
-                userNearLoss
-                  ? "animate-heartbeat border-emerald-300/40 text-emerald-100 shadow-[0_0_24px_rgba(34,197,94,0.22)]"
-                  : ""
-              ].join(" ")}
-            >
-              {playerName}'s Score: {userDeckCount}
-            </div>
-            <div
-              className={[
-                "rounded-full border border-white/10 bg-white/5 px-4 py-2 text-slate-100/85",
-                cpuNearLoss ? "animate-heartbeat border-rose-300/35 text-rose-100 shadow-[0_0_24px_rgba(244,63,94,0.24)]" : ""
-              ].join(" ")}
-            >
-              CPU Score: {cpuDeckCount}
-            </div>
-            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-slate-100/85">
-              Target Score: {targetScore}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-3 sm:text-sm">
+            <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-semibold tracking-wide text-slate-100/85 sm:px-4 sm:py-2">
+              Race to {targetScore} Points
             </div>
             {!gameOver ? (
               <button
                 type="button"
                 onClick={onExitRequest}
-                className="rounded-full border border-rose-200/18 bg-rose-500/10 px-4 py-2 text-slate-100/85 transition hover:border-rose-200/32 hover:bg-rose-500/18"
+                className="rounded-full border border-rose-200/18 bg-rose-500/10 px-3 py-1.5 text-rose-100/85 transition hover:border-rose-200/32 hover:bg-rose-500/18 sm:px-4 sm:py-2"
               >
                 Exit Game
               </button>
@@ -117,22 +100,18 @@ export default function GameBoardV2({
           </div>
         </div>
 
-        <div className="mb-8">
-          <AchievementBadges achievements={achievements} />
-        </div>
-
         {isPlayerMatchPoint ? (
           <motion.div
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.02, 1] }}
             transition={{ duration: 0.45, ease: "easeOut" }}
-            className="mb-8 rounded-[26px] border border-emerald-300/35 bg-[linear-gradient(135deg,rgba(74,222,128,0.16),rgba(255,255,255,0.05),rgba(15,23,42,0.4))] p-4 text-center shadow-[0_0_36px_rgba(34,197,94,0.12)] animate-match-point-pulse-green"
+            className="mb-4 rounded-[20px] border border-emerald-300/35 bg-[linear-gradient(135deg,rgba(74,222,128,0.16),rgba(255,255,255,0.05),rgba(15,23,42,0.4))] p-3 text-center shadow-[0_0_36px_rgba(34,197,94,0.12)] animate-match-point-pulse-green sm:mb-8 sm:rounded-[26px] sm:p-4"
           >
-            <p className="text-xs uppercase tracking-[0.36em] text-emerald-100/78">Momentum</p>
-            <h3 className="mt-2 text-2xl font-black uppercase tracking-[0.08em] text-white sm:text-3xl">
+            <p className="text-[10px] uppercase tracking-[0.36em] text-emerald-100/78 sm:text-xs">Momentum</p>
+            <h3 className="mt-1 text-xl font-black uppercase tracking-[0.08em] text-white sm:mt-2 sm:text-3xl">
               Match Point
             </h3>
-            <p className="mt-2 text-sm text-emerald-50/82">
+            <p className="mt-1 text-xs text-emerald-50/82 sm:mt-2 sm:text-sm">
               1 point to victory.
             </p>
           </motion.div>
@@ -143,13 +122,13 @@ export default function GameBoardV2({
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.02, 1] }}
             transition={{ duration: 0.45, ease: "easeOut" }}
-            className="mb-8 rounded-[26px] border border-rose-300/35 bg-[linear-gradient(135deg,rgba(251,113,133,0.16),rgba(255,255,255,0.05),rgba(15,23,42,0.4))] p-4 text-center shadow-[0_0_36px_rgba(251,113,133,0.12)] animate-match-point-pulse"
+            className="mb-4 rounded-[20px] border border-rose-300/35 bg-[linear-gradient(135deg,rgba(251,113,133,0.16),rgba(255,255,255,0.05),rgba(15,23,42,0.4))] p-3 text-center shadow-[0_0_36px_rgba(251,113,133,0.12)] animate-match-point-pulse sm:mb-8 sm:rounded-[26px] sm:p-4"
           >
-            <p className="text-xs uppercase tracking-[0.36em] text-rose-100/78">Warning</p>
-            <h3 className="mt-2 text-2xl font-black uppercase tracking-[0.08em] text-white sm:text-3xl">
+            <p className="text-[10px] uppercase tracking-[0.36em] text-rose-100/78 sm:text-xs">Warning</p>
+            <h3 className="mt-1 text-xl font-black uppercase tracking-[0.08em] text-white sm:mt-2 sm:text-3xl">
               CPU Match Point
             </h3>
-            <p className="mt-2 text-sm text-rose-50/82">
+            <p className="mt-1 text-xs text-rose-50/82 sm:mt-2 sm:text-sm">
               Danger! One more loss ends the match.
             </p>
           </motion.div>
@@ -160,28 +139,44 @@ export default function GameBoardV2({
             initial={{ opacity: 0, y: -12, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.03, 1] }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="mb-8 rounded-[28px] border border-fuchsia-300/35 bg-[linear-gradient(135deg,rgba(217,70,239,0.16),rgba(251,191,36,0.08),rgba(15,23,42,0.44))] p-5 text-center shadow-[0_0_42px_rgba(217,70,239,0.14)] animate-final-showdown"
+            className="mb-4 rounded-[22px] border border-fuchsia-300/35 bg-[linear-gradient(135deg,rgba(217,70,239,0.16),rgba(251,191,36,0.08),rgba(15,23,42,0.44))] p-4 text-center shadow-[0_0_42px_rgba(217,70,239,0.14)] animate-final-showdown sm:mb-8 sm:rounded-[28px] sm:p-5"
           >
-            <p className="text-xs uppercase tracking-[0.4em] text-fuchsia-100/80">Deadlock</p>
-            <h3 className="mt-2 text-3xl font-black uppercase tracking-[0.08em] text-white sm:text-4xl">
+            <p className="text-[10px] uppercase tracking-[0.4em] text-fuchsia-100/80 sm:text-xs">Deadlock</p>
+            <h3 className="mt-1 text-xl font-black uppercase tracking-[0.08em] text-white sm:mt-2 sm:text-4xl">
               Final Showdown
             </h3>
-            <p className="mt-3 text-sm text-fuchsia-50/84 sm:text-base">
+            <p className="mt-2 text-xs text-fuchsia-50/84 sm:mt-3 sm:text-base">
               It all comes down to this round.
             </p>
           </motion.div>
         ) : null}
 
-        <div className="grid gap-5 xl:grid-cols-[22rem_200px_22rem] xl:items-center xl:justify-center xl:gap-5">
-          <motion.div
-            key={`user-v2-${userPlayer?.name || "empty"}-${userDeckCount}`}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex justify-center xl:justify-start"
-          >
-            <div className="w-full max-w-sm xl:w-[22rem] xl:max-w-[22rem]">
-              <p className="mb-3 text-center text-xs uppercase tracking-[0.28em] text-slate-300/70 xl:text-left">
+        <div className="relative flex flex-1 flex-col justify-center gap-3 sm:grid sm:gap-5 xl:grid-cols-[22rem_200px_22rem] xl:items-center xl:justify-center">
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={`user-v2-${userPlayer?.name || "empty"}`}
+              initial={{ opacity: 0, y: -60, x: -30, rotate: -8, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, x: 0, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 120, x: -40, rotate: -12, scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
+              className="order-1 flex w-full justify-center xl:order-none xl:justify-start"
+            >
+            <div className="mx-auto flex w-full max-w-sm flex-col xl:w-[22rem] xl:max-w-[22rem]">
+              <div className="mb-3 sm:mb-5">
+                <div className="mb-1.5 flex items-end justify-between sm:mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-cyan-300 sm:text-xs">{playerName}</span>
+                  <span className="text-lg font-black leading-none text-white sm:text-xl">{userDeckCount}<span className="text-[10px] text-slate-500 sm:text-xs">/{targetScore}</span></span>
+                </div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <motion.div
+                    className="h-full bg-[linear-gradient(90deg,#0891b2,#22d3ee)] shadow-[0_0_12px_rgba(34,211,238,0.6)]"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(userDeckCount / targetScore) * 100}%` }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  />
+                </div>
+              </div>
+              <p className="mb-2 text-center text-[10px] uppercase tracking-[0.28em] text-slate-300/70 sm:mb-3 sm:text-xs xl:text-left">
                 Tap A Stat On Your Card
               </p>
               {userPlayer ? (
@@ -199,26 +194,35 @@ export default function GameBoardV2({
                   burstKey={`user-${effectKey}`}
                 />
               ) : (
-                <div className="flex min-h-[360px] w-full max-w-sm items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-sm text-slate-300/70">
+                <div className="mx-auto flex h-[280px] w-full max-w-sm items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-xs text-slate-300/70 sm:h-[540px] sm:rounded-3xl sm:text-sm">
                   No cards left
                 </div>
               )}
             </div>
-          </motion.div>
+            </motion.div>
+          </AnimatePresence>
 
-          <div className="order-3 flex flex-col items-center justify-center gap-4 xl:order-none">
-            <div className="w-full max-w-[200px] rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(15,23,42,0.55))] px-5 py-6 text-center shadow-[0_18px_40px_rgba(15,23,42,0.28)]">
-              <p className="text-[11px] uppercase tracking-[0.35em] text-amber-100/70">Matchup</p>
-              <div className="mt-4 rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.14),rgba(255,255,255,0.05))] px-5 py-3 text-lg font-black uppercase tracking-[0.35em] text-amber-50">
-                VS
-              </div>
-              <p className="mt-4 text-xs uppercase tracking-[0.24em] text-slate-300/70">
-                Tap A Stat On Your Card
-              </p>
-              <p className="mt-2 text-sm leading-6 text-slate-300/72">
-                The CPU card reveals after your selection.
-              </p>
-            </div>
+          <div className="order-2 z-20 -my-2 flex flex-col items-center justify-center gap-2 sm:order-3 sm:my-0 sm:gap-4 xl:order-2">
+            {!gameOver ? (
+              <>
+                <div className="flex rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.2),rgba(255,255,255,0.05))] px-4 py-2 text-sm font-black uppercase tracking-[0.3em] text-amber-50 shadow-[0_10px_20px_rgba(0,0,0,0.5)] backdrop-blur-md sm:hidden">
+                  VS
+                </div>
+
+                <div className="hidden w-full max-w-[200px] rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(15,23,42,0.55))] px-5 py-6 text-center shadow-[0_18px_40px_rgba(15,23,42,0.28)] sm:block">
+                  <p className="text-[11px] uppercase tracking-[0.35em] text-amber-100/70">Matchup</p>
+                  <div className="mt-4 rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.14),rgba(255,255,255,0.05))] px-5 py-3 text-lg font-black uppercase tracking-[0.35em] text-amber-50">
+                    VS
+                  </div>
+                  <p className="mt-4 text-xs uppercase tracking-[0.24em] text-slate-300/70">
+                    Tap A Stat
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300/72">
+                    The CPU card reveals after your selection.
+                  </p>
+                </div>
+              </>
+            ) : null}
 
             {roundWinner === "draw" ? (
               <motion.div
@@ -233,22 +237,22 @@ export default function GameBoardV2({
             <RoundResult roundWinner={roundWinner} dramatic={dramaticRoundActive && Boolean(roundWinner)} />
 
             {gameOver && !finalChampion ? (
-              <div className="w-full max-w-xs rounded-3xl border border-amber-200/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.72))] p-5 text-center shadow-[0_20px_45px_rgba(15,23,42,0.4)]">
-                <p className="text-xs uppercase tracking-[0.3em] text-amber-100/70">
+              <div className="w-full max-w-xs rounded-[20px] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.85))] p-4 text-center shadow-[0_20px_45px_rgba(15,23,42,0.6)] backdrop-blur-md sm:rounded-3xl sm:p-5">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-amber-100/70 sm:text-xs">
                   Match Complete
                 </p>
-                <h3 className="mt-3 text-2xl font-semibold">{winnerMessage}</h3>
+                <h3 className="mt-2 text-xl font-semibold sm:mt-3 sm:text-2xl">{winnerMessage}</h3>
                 <button
                   type="button"
                   onClick={onRestart}
-                  className="mt-5 rounded-2xl bg-[linear-gradient(135deg,#fcd34d,#f8fafc)] px-5 py-3 text-sm font-semibold text-slate-950 transition hover:brightness-105"
+                  className="mt-4 w-full rounded-2xl bg-[linear-gradient(135deg,#fcd34d,#f8fafc)] px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:brightness-105 sm:mt-5 sm:px-5 sm:py-3"
                 >
                   Restart Game
                 </button>
                 <button
                   type="button"
                   onClick={onOpenPostcard}
-                  className="mt-3 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 sm:mt-3 sm:px-5 sm:py-3"
                 >
                   Share Postcard
                 </button>
@@ -256,18 +260,35 @@ export default function GameBoardV2({
             ) : null}
           </div>
 
-          <motion.div
-            key={`cpu-v2-${cpuPlayer?.name || "empty"}-${cpuDeckCount}-${cpuRevealed ? "open" : "closed"}`}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="order-2 flex justify-center xl:order-none xl:justify-end"
-          >
-            <div className="w-full max-w-sm xl:w-[22rem] xl:max-w-[22rem]">
-              <p className="mb-3 text-center text-xs uppercase tracking-[0.28em] text-slate-300/70 xl:text-left">
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={`cpu-v2-${cpuPlayer?.name || "empty"}`}
+              initial={{ opacity: 0, y: -60, x: 30, rotate: 8, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, x: 0, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 120, x: 40, rotate: 12, scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
+              className="order-3 flex w-full justify-center sm:order-2 xl:order-3 xl:justify-end"
+            >
+            <div className="mx-auto flex w-full max-w-sm flex-col xl:w-[22rem] xl:max-w-[22rem]">
+              <div className="order-3 mt-3 sm:order-1 sm:mb-5 sm:mt-0">
+                <div className="mb-1.5 flex items-end justify-between sm:mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 sm:text-xs">CPU</span>
+                  <span className="text-lg font-black leading-none text-white sm:text-xl">{cpuDeckCount}<span className="text-[10px] text-slate-500 sm:text-xs">/{targetScore}</span></span>
+                </div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <motion.div
+                    className="h-full bg-[linear-gradient(90deg,#e11d48,#fb7185)] shadow-[0_0_12px_rgba(244,63,94,0.6)]"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(cpuDeckCount / targetScore) * 100}%` }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  />
+                </div>
+              </div>
+              <p className="order-1 mb-2 text-center text-[10px] uppercase tracking-[0.28em] text-slate-300/70 sm:order-2 sm:mb-3 sm:text-xs xl:text-left">
                 CPU Card
               </p>
               <motion.div
+                className="order-2 sm:order-3"
                 animate={{ opacity: cpuRevealed ? 1 : 1 }}
                 transition={{ duration: dramaticRoundActive ? 0.8 : 0.3, ease: "easeOut" }}
               >
@@ -283,13 +304,19 @@ export default function GameBoardV2({
                     burstKey={`cpu-${effectKey}`}
                   />
                 ) : (
-                  <div className="flex min-h-[360px] w-full max-w-sm items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-sm text-slate-300/70">
+                  <div className="mx-auto flex h-[100px] w-full max-w-sm items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-xs text-slate-300/70 sm:h-[540px] sm:rounded-3xl sm:text-sm">
                     No cards left
                   </div>
                 )}
               </motion.div>
             </div>
-          </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-8 border-t border-white/5 pt-6 sm:mt-12 sm:pt-8">
+          <p className="mb-4 text-center text-[10px] uppercase tracking-[0.3em] text-slate-400 sm:text-xs">Match Achievements</p>
+          <AchievementBadges achievements={achievements} />
         </div>
 
         {roundWinner === "user" ? (

@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, animate } from "framer-motion";
+import { useState, useEffect } from "react";
 import CelebrationBurst from "@/components/CelebrationBurst";
 
 const statStyles = {
@@ -67,6 +68,28 @@ function formatRawStat(label, value) {
   return value.toFixed(1);
 }
 
+function AnimatedStatValue({ value, label, isImpact, shouldAnimate }) {
+  const [displayValue, setDisplayValue] = useState(shouldAnimate ? 0 : value);
+
+  useEffect(() => {
+    if (shouldAnimate && typeof value === "number") {
+      const controls = animate(0, value, {
+        duration: 1.2,
+        ease: "easeOut",
+        onUpdate: (v) => setDisplayValue(v)
+      });
+      return () => controls.stop();
+    } else {
+      setDisplayValue(value);
+    }
+  }, [value, shouldAnimate]);
+
+  if (isImpact) {
+    return <>{typeof displayValue === "number" ? Math.round(displayValue) : "--"}</>;
+  }
+  return <>{formatRawStat(label, displayValue)}</>;
+}
+
 export default function PlayerCardV2({
   name,
   stats,
@@ -90,14 +113,16 @@ export default function PlayerCardV2({
 
   return (
     <motion.article
+      layout
       whileHover={{}}
       transition={{ type: "spring", stiffness: 230, damping: 22 }}
       className={[
-        "relative w-full max-w-sm overflow-hidden rounded-[30px] border p-5 text-white",
+        "relative w-full max-w-sm overflow-hidden border p-3 text-white sm:p-5",
         highlighted ? theme.shellHighlighted : theme.shell,
         outcome === "win" ? "card-win-pulse" : "",
         outcome === "loss" ? "card-loss-shake card-loss-dim" : "",
-        outcome === "draw" ? "card-draw-flash" : ""
+        outcome === "draw" ? "card-draw-flash" : "",
+        hidden && variant === "cpu" ? "h-[100px] rounded-[20px] sm:h-[540px] sm:rounded-[30px]" : "h-auto rounded-[20px] sm:h-[540px] sm:rounded-[30px]"
       ].join(" ")}
       style={{ transformStyle: "preserve-3d" }}
     >
@@ -106,65 +131,101 @@ export default function PlayerCardV2({
       <div className={["pointer-events-none absolute inset-[1px] rounded-[28px] border", theme.innerBorder].join(" ")} />
       <div className={["pointer-events-none absolute inset-x-5 top-5 h-px", theme.topLine].join(" ")} />
 
-      <div className="relative z-10">
+      <motion.div
+        key={hidden ? "hidden" : "revealed"}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="relative z-10 h-full"
+      >
         {hidden ? (
-          <div className={["flex min-h-[472px] flex-col items-center justify-center rounded-[24px] border text-center", theme.hiddenWrap].join(" ")}>
-            <div className={["rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.35em]", theme.hiddenChip].join(" ")}>
-              Premium Pack
+          <div className={["flex h-full flex-row items-center justify-between rounded-[12px] border px-4 py-2 text-center sm:flex-col sm:justify-center sm:rounded-[24px] sm:p-0", theme.hiddenWrap].join(" ")}>
+            <div className="flex flex-col items-start text-left sm:items-center sm:text-center">
+              <div className={["rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.35em] sm:text-[11px]", theme.hiddenChip].join(" ")}>
+                Premium Pack
+              </div>
+              <p className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-slate-200/90 sm:mt-5 sm:text-xs sm:font-normal sm:tracking-[0.3em] sm:text-slate-200/70">Hidden Card</p>
             </div>
-            <div className={["mt-5 flex h-32 w-24 items-center justify-center rounded-[22px] border", theme.hiddenFrame].join(" ")}>
+            <div className={["mt-5 hidden h-32 w-24 items-center justify-center rounded-[22px] border sm:flex", theme.hiddenFrame].join(" ")}>
               <div className={["h-20 w-14 rounded-[14px] border", theme.hiddenCore].join(" ")} />
             </div>
-            <p className="mt-5 text-xs uppercase tracking-[0.3em] text-slate-200/70">Hidden Card</p>
-            <p className="mt-3 px-6 text-sm text-slate-300/70">
-              CPU card will be revealed after your pick
+            <div className="flex h-12 w-9 items-center justify-center rounded-[8px] border border-white/10 bg-white/5 sm:hidden">
+              <div className="h-6 w-4 rounded-[4px] border border-white/10 bg-white/10" />
+            </div>
+            <p className="hidden px-6 text-sm text-slate-300/70 sm:mt-3 sm:block">
+              Reveals after your selection
             </p>
           </div>
         ) : (
           <>
-            <div className="mb-6">
+            <div className="mb-3 sm:mb-6">
               <div>
-                <p className={["text-[11px] uppercase tracking-[0.34em]", theme.eyebrow].join(" ")}>
-                  IPL Trump Card
-                </p>
-                <h3 className="mt-4 max-w-[13rem] text-[clamp(1.7rem,4vw,2.4rem)] font-black uppercase leading-[0.95] tracking-tight text-white">
+              <h3 className="max-w-[13rem] text-xl font-black uppercase leading-[1.1] tracking-tight text-white sm:text-[clamp(1.7rem,4vw,2.4rem)] sm:leading-[0.95]">
                   {name}
                 </h3>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
-              {items.map((item) => (
-                <button
-                  key={item.label}
-                  type="button"
-                  onClick={() => onStatSelect?.(item.key)}
-                  disabled={!isSelectable || disabled}
-                  className={[
-                    "flex min-h-[88px] w-full items-center justify-between gap-4 rounded-[22px] border px-4 py-4 text-left transition",
-                    statStyles[item.label][selectedStat === item.key ? "active" : "base"],
-                    isSelectable && !disabled
-                      ? "cursor-pointer hover:border-white/35"
-                      : "cursor-default",
-                    disabled ? "opacity-70" : ""
-                  ].join(" ")}
-                >
-                  <p className="text-[11px] uppercase tracking-[0.22em] text-slate-300/72">
-                    {item.label}
-                  </p>
-                  <p className="text-2xl font-bold text-white">
-                    {item.isImpact
-                      ? typeof item.value === "number"
-                        ? Math.round(item.value)
-                        : "--"
-                      : formatRawStat(item.label, item.value)}
-                  </p>
-                </button>
-              ))}
+            <div className="flex flex-col gap-2 sm:gap-3">
+              {items.map((item) => {
+                const isSelected = selectedStat === item.key;
+                const isOther = selectedStat && !isSelected;
+                const hideOnMobile = variant === "cpu" && isOther ? "hidden sm:flex" : "flex";
+
+                let outcomeStyle = statStyles[item.label][isSelected ? "active" : "base"];
+                if (isSelected && outcome === "win") {
+                  outcomeStyle = "border-emerald-400 bg-emerald-400/20 shadow-[0_0_20px_rgba(52,211,153,0.35)]";
+                } else if (isSelected && outcome === "loss") {
+                  outcomeStyle = "border-rose-400 bg-rose-400/20 shadow-[0_0_20px_rgba(244,63,94,0.35)]";
+                } else if (isSelected && outcome === "draw") {
+                  outcomeStyle = "border-slate-400 bg-slate-400/20 shadow-[0_0_20px_rgba(148,163,184,0.35)]";
+                }
+
+                let winnerAnimation = {};
+                if (isSelected) {
+                  if (outcome === "win") {
+                    winnerAnimation = { scale: [1, 1.05, 1], transition: { duration: 0.4 } };
+                  } else if (outcome === "loss") {
+                    winnerAnimation = { x: [0, -6, 6, -5, 5, 0], transition: { duration: 0.4 } };
+                  }
+                }
+
+                return (
+                  <motion.button
+                    key={item.label}
+                    type="button"
+                    animate={winnerAnimation}
+                    whileTap={isSelectable && !disabled ? { scale: 0.95 } : {}}
+                    onClick={() => onStatSelect?.(item.key)}
+                    disabled={!isSelectable || disabled}
+                    className={[
+                      hideOnMobile,
+                      "w-full flex-row items-center justify-between gap-3 rounded-[16px] border px-4 py-3 text-left transition-all duration-300 min-h-[56px] sm:min-h-[88px] sm:gap-4 sm:rounded-[22px] sm:px-4 sm:py-4",
+                      outcomeStyle,
+                      isOther ? "opacity-40 grayscale" : "opacity-100",
+                      isSelectable && !disabled
+                        ? "cursor-pointer hover:border-white/35"
+                        : "cursor-default"
+                    ].join(" ")}
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.15em] text-slate-300/72 sm:text-[11px] sm:tracking-[0.22em]">
+                      {item.label}
+                    </p>
+                    <p className="text-lg font-bold text-white sm:text-2xl">
+                      <AnimatedStatValue
+                        value={item.value}
+                        label={item.label}
+                        isImpact={item.isImpact}
+                        shouldAnimate={variant === "cpu" && !hidden && isSelected}
+                      />
+                    </p>
+                  </motion.button>
+                );
+              })}
             </div>
           </>
         )}
-      </div>
+      </motion.div>
     </motion.article>
   );
 }
