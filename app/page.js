@@ -355,7 +355,7 @@ export default function HomePage() {
               </h1>
               <p className="mt-2 text-sm font-semibold text-white sm:text-base">Can you beat the CPU? 🔥</p>
               <p className="mt-2 max-w-xl text-xs leading-5 text-mist sm:text-sm">
-                A fast, stat-driven cricket card game powered by IPL batting data from 2024-2025.
+                A fast, stat-driven cricket card game powered by a decade of IPL batting data (2016-2025).
               </p>
               <p className="mt-2 max-w-xl text-xs leading-5 text-mist sm:text-sm">
                 Pick your stat, reveal the CPU card, and race to 10 round wins.

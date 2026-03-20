@@ -21,14 +21,107 @@ def safe_read_json(file_path: Path) -> dict:
 
 
 def load_display_name_overrides(file_path: Path = DISPLAY_NAME_OVERRIDES_PATH) -> dict[str, str]:
+    overrides = {
+        "RR Pant": "Rishabh Pant",
+        "MS Dhoni": "MS Dhoni",
+        "DA Warner": "David Warner",
+        "V Kohli": "Virat Kohli",
+        "RG Sharma": "Rohit Sharma",
+        "AB de Villiers": "AB de Villiers",
+        "CH Gayle": "Chris Gayle",
+        "S Dhawan": "Shikhar Dhawan",
+        "RV Uthappa": "Robin Uthappa",
+        "KD Karthik": "Dinesh Karthik",
+        "AM Rahane": "Ajinkya Rahane",
+        "AT Rayudu": "Ambati Rayudu",
+        "G Gambhir": "Gautam Gambhir",
+        "SR Tendulkar": "Sachin Tendulkar",
+        "KA Pollard": "Kieron Pollard",
+        "GJ Maxwell": "Glenn Maxwell",
+        "AD Russell": "Andre Russell",
+        "SV Samson": "Sanju Samson",
+        "SS Iyer": "Shreyas Iyer",
+        "KL Rahul": "KL Rahul",
+        "SA Yadav": "Suryakumar Yadav",
+        "F du Plessis": "Faf du Plessis",
+        "Q de Kock": "Quinton de Kock",
+        "DA Miller": "David Miller",
+        "JC Buttler": "Jos Buttler",
+        "KS Williamson": "Kane Williamson",
+        "SPD Smith": "Steve Smith",
+        "BB McCullum": "Brendon McCullum",
+        "MEK Hussey": "Michael Hussey",
+        "JH Kallis": "Jacques Kallis",
+        "Yuvraj Singh": "Yuvraj Singh",
+        "V Sehwag": "Virender Sehwag",
+        "RA Jadeja": "Ravindra Jadeja",
+        "HH Pandya": "Hardik Pandya",
+        "KH Pandya": "Krunal Pandya",
+        "AR Patel": "Axar Patel",
+        "MP Stoinis": "Marcus Stoinis",
+        "SP Narine": "Sunil Narine",
+        "S Dube": "Shivam Dube",
+        "N Rana": "Nitish Rana",
+        "RD Gaikwad": "Ruturaj Gaikwad",
+        "YBK Jaiswal": "Yashasvi Jaiswal",
+        "D Padikkal": "Devdutt Padikkal",
+        "PP Shaw": "Prithvi Shaw",
+        "JM Bairstow": "Jonny Bairstow",
+        "MA Agarwal": "Mayank Agarwal",
+        "RA Tripathi": "Rahul Tripathi",
+        "N Pooran": "Nicholas Pooran",
+        "TH David": "Tim David",
+        "H Klaasen": "Heinrich Klaasen",
+        "R Parag": "Riyan Parag",
+        "B Sai Sudharsan": "Sai Sudharsan",
+        "PD Salt": "Phil Salt",
+        "TM Head": "Travis Head",
+        "J Fraser-McGurk": "Jake Fraser-McGurk",
+        "RR Rossouw": "Rilee Rossouw",
+        "M Shahrukh Khan": "Shahrukh Khan",
+        "RM Patidar": "Rajat Patidar",
+        "SE Rutherford": "Sherfane Rutherford",
+        "WG Jacks": "Will Jacks",
+        "VR Iyer": "Venkatesh Iyer",
+        "WP Saha": "Wriddhiman Saha",
+        "PA Patel": "Parthiv Patel",
+        "MK Pandey": "Manish Pandey",
+        "YK Pathan": "Yusuf Pathan",
+        "CA Lynn": "Chris Lynn",
+        "LMP Simmons": "Lendl Simmons",
+        "DR Smith": "Dwayne Smith",
+        "MC Henriques": "Moises Henriques",
+        "EJG Morgan": "Eoin Morgan",
+        "SO Hetmyer": "Shimron Hetmyer",
+        "E Lewis": "Evin Lewis",
+        "C Munro": "Colin Munro",
+        "DJM Short": "D'Arcy Short",
+        "A Mhatre": "Ayush Mhatre",
+        "V Suryavanshi": "Vaibhav Suryavanshi",
+        "KK Nair": "Karun Nair",
+        "JP Inglis": "Josh Inglis",
+        "P Simran Singh": "Prabhsimran Singh",
+        "D Brevis": "Dewald Brevis",
+        "RD Rickelton": "Ryan Rickelton",
+        "Naman Dhir": "Naman Dhir",
+        "Priyansh Arya": "Priyansh Arya",
+        "T Stubbs": "Tristan Stubbs",
+        "MR Marsh": "Mitchell Marsh",
+        "JJ Roy": "Jason Roy",
+        "HM Amla": "Hashim Amla",
+    }
+
     if not file_path.exists():
-        return {}
+        return overrides
 
     data = safe_read_json(file_path)
     if not isinstance(data, dict):
-        return {}
+        return overrides
 
-    return {str(key): str(value) for key, value in data.items()}
+    for key, value in data.items():
+        overrides[str(key)] = str(value)
+        
+    return overrides
 
 
 def extract_match_year(match_data: dict) -> int | None:
@@ -244,6 +337,9 @@ def build_players_deck(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(final_frame.to_json(orient="records", indent=2), encoding="utf-8")
 
+    excel_path = output_path.with_suffix(".xlsx")
+    final_frame.to_excel(excel_path, index=False)
+
     return final_frame
 
 
@@ -253,8 +349,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
-    parser.add_argument("--seasons", nargs="+", type=int, default=[2024, 2025])
-    parser.add_argument("--min-balls", type=int, default=100)
+    parser.add_argument("--seasons", nargs="+", type=int, default=list(range(2016, 2026)))
+    parser.add_argument("--min-balls", type=int, default=300)
     parser.add_argument("--top-n", type=int, default=50)
     parser.add_argument(
         "--max-files",
