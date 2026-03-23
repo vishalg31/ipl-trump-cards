@@ -58,7 +58,7 @@ export default function GameBoardV2({
       }}
       transition={{ duration: dramaticRoundActive ? 0.8 : 0.3, ease: "easeOut" }}
       className={[
-        "relative flex w-full md:w-auto flex-col justify-between overflow-hidden border bg-[linear-gradient(180deg,#18181b_0%,#0f172a_42%,#111827_100%)] px-3 py-4 text-white sm:rounded-[32px] sm:px-6 sm:py-6 lg:px-8",
+        "relative flex w-full xl:w-auto flex-col justify-between overflow-hidden border bg-[linear-gradient(180deg,#18181b_0%,#0f172a_42%,#111827_100%)] px-3 py-4 text-white sm:rounded-[32px] sm:px-4 sm:py-6 lg:px-8",
         "min-h-[calc(100dvh-2rem)] rounded-[24px] sm:min-h-0 sm:shadow-[0_24px_60px_rgba(15,23,42,0.5)]",
         dramaticRoundActive
           ? "border-fuchsia-300/30 shadow-[0_0_60px_rgba(217,70,239,0.12),0_24px_60px_rgba(15,23,42,0.5)]"
@@ -165,7 +165,7 @@ export default function GameBoardV2({
           </motion.div>
         ) : null}
 
-        <div className="relative flex flex-1 flex-col justify-center gap-3 sm:grid sm:gap-5 md:grid-cols-[1fr_120px_1fr] lg:grid-cols-[22rem_200px_22rem] md:items-center md:justify-center">
+        <div className="relative flex flex-1 flex-col justify-center gap-3 sm:grid sm:gap-5 md:gap-3 md:grid-cols-[1fr_60px_1fr] lg:gap-5 lg:grid-cols-[22rem_200px_22rem] md:items-center md:justify-center">
           <AnimatePresence mode="popLayout">
             <motion.div
               key={`user-v2-${userPlayer?.name || "empty"}`}
@@ -175,7 +175,7 @@ export default function GameBoardV2({
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               className="order-1 flex w-full justify-center md:order-none md:justify-start"
             >
-            <div className="mx-auto flex w-full max-w-sm flex-col md:max-w-[22rem] lg:w-[22rem]">
+            <div className="mx-auto flex w-full max-w-md flex-col lg:max-w-[22rem] lg:w-[22rem]">
               <div className="mb-3 sm:mb-5">
                 <div className="mb-1.5 flex items-end justify-between sm:mb-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-cyan-300 sm:text-xs">{playerName}</span>
@@ -208,7 +208,7 @@ export default function GameBoardV2({
                   burstKey={`user-${effectKey}`}
                 />
               ) : (
-                <div className="mx-auto flex h-[280px] w-full max-w-sm items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-xs text-slate-300/70 sm:h-[540px] sm:rounded-3xl sm:text-sm">
+                <div className="mx-auto flex h-[280px] w-full items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-xs text-slate-300/70 sm:h-auto sm:aspect-[65/100] sm:rounded-3xl sm:text-sm">
                   No cards left
                 </div>
               )}
@@ -283,7 +283,7 @@ export default function GameBoardV2({
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               className="order-3 flex w-full justify-center md:order-none md:justify-end"
             >
-            <div className="mx-auto flex w-full max-w-sm flex-col md:max-w-[22rem] lg:w-[22rem]">
+            <div className="mx-auto flex w-full max-w-md flex-col lg:max-w-[22rem] lg:w-[22rem]">
               <div className="order-3 mt-3 sm:order-1 sm:mb-5 sm:mt-0">
                 <div className="mb-1.5 flex items-end justify-between sm:mb-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 sm:text-xs">CPU</span>
@@ -318,7 +318,7 @@ export default function GameBoardV2({
                     burstKey={`cpu-${effectKey}`}
                   />
                 ) : (
-                  <div className="mx-auto flex h-[100px] w-full max-w-sm items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-xs text-slate-300/70 sm:h-[540px] sm:rounded-3xl sm:text-sm">
+                  <div className="mx-auto flex h-[100px] w-full items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-xs text-slate-300/70 sm:h-auto sm:aspect-[65/100] sm:rounded-3xl sm:text-sm">
                     No cards left
                   </div>
                 )}

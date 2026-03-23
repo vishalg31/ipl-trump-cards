@@ -202,7 +202,7 @@ export default function PlayerCardV2({
                       hideOnMobile,
                       "w-full flex-row items-center justify-between gap-3 rounded-[16px] border px-4 py-3 text-left transition-all duration-300 min-h-[56px] sm:min-h-[88px] sm:gap-4 sm:rounded-[22px] sm:px-4 sm:py-4",
                       outcomeStyle,
-                      isOther ? "opacity-40 grayscale" : "opacity-100",
+                      isOther ? "opacity-30 grayscale blur-[2px] scale-[0.98]" : "opacity-100",
                       isSelectable && !disabled
                         ? "cursor-pointer hover:border-white/35"
                         : "cursor-default"
