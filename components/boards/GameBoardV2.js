@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import AchievementBadges from "@/components/AchievementBadges";
 import CelebrationBurst from "@/components/CelebrationBurst";
 import ChampionOverlay from "@/components/ChampionOverlay";
@@ -34,9 +35,21 @@ export default function GameBoardV2({
   onOpenPostcard,
   onExitRequest
 }) {
+  const [showLossOverlay, setShowLossOverlay] = useState(false);
+
+  useEffect(() => {
+    if (gameOver && cpuDeckCount >= targetScore) {
+      const timer = setTimeout(() => setShowLossOverlay(true), 1200);
+      return () => clearTimeout(timer);
+    }
+    setShowLossOverlay(false);
+  }, [gameOver, cpuDeckCount, targetScore]);
+
   const isFinalShowdown = userDeckCount === 9 && cpuDeckCount === 9;
   const isPlayerMatchPoint = !isFinalShowdown && userDeckCount === 9;
   const isCpuMatchPoint = !isFinalShowdown && cpuDeckCount === 9;
+  const isUserWin = userDeckCount >= targetScore;
+  const showOverlay = finalChampion || showLossOverlay;
 
   return (
     <motion.section
@@ -53,8 +66,9 @@ export default function GameBoardV2({
       ].join(" ")}
     >
       <ChampionOverlay
-        show={finalChampion}
-        onClose={onCloseCelebration}
+        show={showOverlay}
+        isWin={isUserWin}
+        onClose={isUserWin ? onCloseCelebration : () => setShowLossOverlay(false)}
         onRestart={onRestart}
         onOpenPostcard={onOpenPostcard}
       />
@@ -236,7 +250,7 @@ export default function GameBoardV2({
 
             <RoundResult roundWinner={roundWinner} dramatic={dramaticRoundActive && Boolean(roundWinner)} />
 
-            {gameOver && !finalChampion ? (
+            {gameOver && !showOverlay ? (
               <div className="w-full max-w-xs rounded-[20px] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.85))] p-4 text-center shadow-[0_20px_45px_rgba(15,23,42,0.6)] backdrop-blur-md sm:rounded-3xl sm:p-5">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-amber-100/70 sm:text-xs">
                   Match Complete

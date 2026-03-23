@@ -8,35 +8,34 @@ export default function RoundResult({ roundWinner, dramatic = false }) {
   };
 
   const toneMap = {
-    user: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
-    cpu: "border-rose-400/30 bg-rose-400/10 text-rose-200",
-    draw: "border-amber-400/30 bg-amber-400/10 text-amber-200"
+    user: "border-emerald-400/40 bg-[linear-gradient(135deg,rgba(16,185,129,0.95),rgba(5,150,105,0.9))] text-white shadow-[0_20px_50px_rgba(16,185,129,0.35)]",
+    cpu: "border-rose-400/40 bg-[linear-gradient(135deg,rgba(225,29,72,0.95),rgba(190,18,60,0.9))] text-white shadow-[0_20px_50px_rgba(225,29,72,0.35)]",
+    draw: "border-amber-400/40 bg-[linear-gradient(135deg,rgba(245,158,11,0.95),rgba(217,119,6,0.9))] text-white shadow-[0_20px_50px_rgba(245,158,11,0.35)]"
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {roundWinner ? (
         <motion.div
           key={roundWinner}
-          initial={{ opacity: 0, y: dramatic ? 18 : 10, scale: dramatic ? 0.9 : 0.96 }}
+          initial={{ opacity: 0, x: "-50%", y: "-30%", scale: dramatic ? 0.8 : 0.9 }}
           animate={{
             opacity: 1,
-            y: 0,
+            x: "-50%",
+            y: "-50%",
             scale: dramatic ? [0.94, 1.08, 1] : 1
           }}
-          exit={{ opacity: 0, y: -10, scale: dramatic ? 0.92 : 0.96 }}
+          exit={{ opacity: 0, x: "-50%", y: "-70%", scale: 0.9 }}
           transition={{ duration: dramatic ? 0.42 : 0.22, ease: "easeOut" }}
           className={[
-            "min-h-[52px] rounded-2xl border px-5 py-3 text-center text-sm font-semibold uppercase tracking-[0.18em]",
+            "pointer-events-none fixed left-1/2 top-1/2 z-[100] w-[min(90vw,320px)] rounded-[24px] border px-6 py-5 text-center text-base font-black uppercase tracking-[0.2em] backdrop-blur-md sm:text-lg",
             dramatic ? "shadow-[0_0_30px_rgba(250,204,21,0.18)]" : "",
             toneMap[roundWinner]
           ].join(" ")}
         >
           {messageMap[roundWinner]}
         </motion.div>
-      ) : (
-        <div className="min-h-[52px]" />
-      )}
+      ) : null}
     </AnimatePresence>
   );
 }
