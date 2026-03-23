@@ -58,7 +58,7 @@ export default function GameBoardV2({
       }}
       transition={{ duration: dramaticRoundActive ? 0.8 : 0.3, ease: "easeOut" }}
       className={[
-        "relative flex w-full xl:w-auto flex-col justify-between overflow-hidden border bg-[linear-gradient(180deg,#18181b_0%,#0f172a_42%,#111827_100%)] px-3 py-4 text-white sm:rounded-[32px] sm:px-6 sm:py-6 lg:px-8",
+        "relative flex w-full md:w-auto flex-col justify-between overflow-hidden border bg-[linear-gradient(180deg,#18181b_0%,#0f172a_42%,#111827_100%)] px-3 py-4 text-white sm:rounded-[32px] sm:px-6 sm:py-6 lg:px-8",
         "min-h-[calc(100dvh-2rem)] rounded-[24px] sm:min-h-0 sm:shadow-[0_24px_60px_rgba(15,23,42,0.5)]",
         dramaticRoundActive
           ? "border-fuchsia-300/30 shadow-[0_0_60px_rgba(217,70,239,0.12),0_24px_60px_rgba(15,23,42,0.5)]"
@@ -165,7 +165,7 @@ export default function GameBoardV2({
           </motion.div>
         ) : null}
 
-        <div className="relative flex flex-1 flex-col justify-center gap-3 sm:grid sm:gap-5 xl:grid-cols-[22rem_200px_22rem] xl:items-center xl:justify-center">
+        <div className="relative flex flex-1 flex-col justify-center gap-3 sm:grid sm:gap-5 md:grid-cols-[1fr_120px_1fr] lg:grid-cols-[22rem_200px_22rem] md:items-center md:justify-center">
           <AnimatePresence mode="popLayout">
             <motion.div
               key={`user-v2-${userPlayer?.name || "empty"}`}
@@ -173,9 +173,9 @@ export default function GameBoardV2({
               animate={{ opacity: 1, y: 0, x: 0, rotate: 0, scale: 1 }}
               exit={{ opacity: 0, y: 120, x: -40, rotate: -12, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              className="order-1 flex w-full justify-center xl:order-none xl:justify-start"
+              className="order-1 flex w-full justify-center md:order-none md:justify-start"
             >
-            <div className="mx-auto flex w-full max-w-sm flex-col xl:w-[22rem] xl:max-w-[22rem]">
+            <div className="mx-auto flex w-full max-w-sm flex-col md:max-w-[22rem] lg:w-[22rem]">
               <div className="mb-3 sm:mb-5">
                 <div className="mb-1.5 flex items-end justify-between sm:mb-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-cyan-300 sm:text-xs">{playerName}</span>
@@ -190,7 +190,7 @@ export default function GameBoardV2({
                   />
                 </div>
               </div>
-              <p className="mb-2 text-center text-[10px] uppercase tracking-[0.28em] text-slate-300/70 sm:mb-3 sm:text-xs xl:text-left">
+              <p className="mb-2 text-center text-[10px] uppercase tracking-[0.28em] text-slate-300/70 sm:mb-3 sm:text-xs md:text-left">
                 Tap A Stat On Your Card
               </p>
               {userPlayer ? (
@@ -216,14 +216,14 @@ export default function GameBoardV2({
             </motion.div>
           </AnimatePresence>
 
-          <div className="order-2 z-20 -my-2 flex flex-col items-center justify-center gap-2 sm:order-3 sm:my-0 sm:gap-4 xl:order-2">
+          <div className="order-2 z-20 -my-2 flex flex-col items-center justify-center gap-2 sm:my-0 sm:gap-4 md:order-none">
             {!gameOver ? (
               <>
-                <div className="flex rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.2),rgba(255,255,255,0.05))] px-4 py-2 text-sm font-black uppercase tracking-[0.3em] text-amber-50 shadow-[0_10px_20px_rgba(0,0,0,0.5)] backdrop-blur-md sm:hidden">
+                <div className="flex rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.2),rgba(255,255,255,0.05))] px-4 py-2 text-sm font-black uppercase tracking-[0.3em] text-amber-50 shadow-[0_10px_20px_rgba(0,0,0,0.5)] backdrop-blur-md lg:hidden">
                   VS
                 </div>
 
-                <div className="hidden w-full max-w-[200px] rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(15,23,42,0.55))] px-5 py-6 text-center shadow-[0_18px_40px_rgba(15,23,42,0.28)] sm:block">
+                <div className="hidden w-full max-w-[200px] rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(15,23,42,0.55))] px-5 py-6 text-center shadow-[0_18px_40px_rgba(15,23,42,0.28)] lg:block">
                   <p className="text-[11px] uppercase tracking-[0.35em] text-amber-100/70">Matchup</p>
                   <div className="mt-4 rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.14),rgba(255,255,255,0.05))] px-5 py-3 text-lg font-black uppercase tracking-[0.35em] text-amber-50">
                     VS
@@ -251,15 +251,15 @@ export default function GameBoardV2({
             <RoundResult roundWinner={roundWinner} dramatic={dramaticRoundActive && Boolean(roundWinner)} />
 
             {gameOver && !showOverlay ? (
-              <div className="w-full max-w-xs rounded-[20px] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.85))] p-4 text-center shadow-[0_20px_45px_rgba(15,23,42,0.6)] backdrop-blur-md sm:rounded-3xl sm:p-5">
+              <div className="fixed left-1/2 top-1/2 z-[110] w-[min(90vw,320px)] -translate-x-1/2 -translate-y-1/2 rounded-[24px] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.85))] p-5 text-center shadow-[0_30px_60px_rgba(15,23,42,0.8)] backdrop-blur-md sm:rounded-3xl sm:p-6">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-amber-100/70 sm:text-xs">
                   Match Complete
                 </p>
-                <h3 className="mt-2 text-xl font-semibold sm:mt-3 sm:text-2xl">{winnerMessage}</h3>
+                <h3 className="mt-2 text-2xl font-bold sm:mt-3 sm:text-3xl">{winnerMessage}</h3>
                 <button
                   type="button"
                   onClick={onRestart}
-                  className="mt-4 w-full rounded-2xl bg-[linear-gradient(135deg,#fcd34d,#f8fafc)] px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:brightness-105 sm:mt-5 sm:px-5 sm:py-3"
+                  className="mt-5 w-full rounded-2xl bg-[linear-gradient(135deg,#fcd34d,#f8fafc)] px-4 py-3 text-sm font-bold uppercase tracking-[0.15em] text-slate-950 transition hover:brightness-105 sm:mt-6"
                 >
                   Restart Game
                 </button>
@@ -281,9 +281,9 @@ export default function GameBoardV2({
               animate={{ opacity: 1, y: 0, x: 0, rotate: 0, scale: 1 }}
               exit={{ opacity: 0, y: 120, x: 40, rotate: 12, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              className="order-3 flex w-full justify-center sm:order-2 xl:order-3 xl:justify-end"
+              className="order-3 flex w-full justify-center md:order-none md:justify-end"
             >
-            <div className="mx-auto flex w-full max-w-sm flex-col xl:w-[22rem] xl:max-w-[22rem]">
+            <div className="mx-auto flex w-full max-w-sm flex-col md:max-w-[22rem] lg:w-[22rem]">
               <div className="order-3 mt-3 sm:order-1 sm:mb-5 sm:mt-0">
                 <div className="mb-1.5 flex items-end justify-between sm:mb-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 sm:text-xs">CPU</span>
@@ -298,7 +298,7 @@ export default function GameBoardV2({
                   />
                 </div>
               </div>
-              <p className="order-1 mb-2 text-center text-[10px] uppercase tracking-[0.28em] text-slate-300/70 sm:order-2 sm:mb-3 sm:text-xs xl:text-left">
+              <p className="order-1 mb-2 text-center text-[10px] uppercase tracking-[0.28em] text-slate-300/70 sm:order-2 sm:mb-3 sm:text-xs md:text-left">
                 CPU Card
               </p>
               <motion.div
