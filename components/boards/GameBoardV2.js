@@ -33,9 +33,28 @@ export default function GameBoardV2({
   onCloseCelebration,
   achievements,
   onOpenPostcard,
-  onExitRequest
+  onExitRequest,
+  onTimeout
 }) {
   const [showLossOverlay, setShowLossOverlay] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(15);
+
+  const timerActive = !gameOver && !isResolving && !selectedStat && !!userPlayer;
+
+  useEffect(() => {
+    if (!timerActive) {
+      setTimeLeft(15);
+      return;
+    }
+    if (timeLeft <= 0) {
+      onTimeout?.();
+      return;
+    }
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timerActive, timeLeft, onTimeout]);
 
   useEffect(() => {
     if (gameOver && cpuDeckCount >= targetScore) {
@@ -74,7 +93,24 @@ export default function GameBoardV2({
       />
       <StreakToast show={showStreakToast} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.12),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(226,232,240,0.08),transparent_28%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,rgba(148,163,184,0.18),rgba(250,204,21,0.65),rgba(226,232,240,0.18))]" />
+      
+      {timerActive ? (
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-white/5">
+          <motion.div
+            initial={{ width: "100%" }}
+            animate={{ width: "0%" }}
+            transition={{ duration: 15, ease: "linear" }}
+            className={`h-full ${
+              timeLeft <= 3 ? "bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.8)]" :
+              timeLeft <= 7 ? "bg-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.8)]" :
+              "bg-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.8)]"
+            }`}
+          />
+        </div>
+      ) : (
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,rgba(148,163,184,0.18),rgba(250,204,21,0.65),rgba(226,232,240,0.18))]" />
+      )}
+
       {dramaticRoundActive ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -99,6 +135,16 @@ export default function GameBoardV2({
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-3 sm:text-sm">
+            {timerActive && (
+              <div className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-bold tabular-nums sm:px-4 sm:py-2 transition-colors duration-300 ${
+                timeLeft <= 3 ? "border-rose-400/50 bg-rose-500/20 text-rose-300 animate-pulse" :
+                timeLeft <= 7 ? "border-amber-400/50 bg-amber-500/20 text-amber-200" :
+                "border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
+              }`}>
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                00:{timeLeft.toString().padStart(2, '0')}
+              </div>
+            )}
             <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-semibold tracking-wide text-slate-100/85 sm:px-4 sm:py-2">
               Race to {targetScore} Points
             </div>

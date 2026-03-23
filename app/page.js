@@ -229,6 +229,26 @@ export default function HomePage() {
     playRound(statKey);
   }
 
+  function handleTimeout() {
+    if (!userCard || !cpuCard || isResolving || gameOver) {
+      return;
+    }
+
+    // Smart Forfeit: Find a stat where the CPU is guaranteed to win
+    const stats = ["strike_rate", "boundary_rate", "consistency", "impact_score"];
+    let autoPick = stats[0];
+    
+    for (const stat of stats) {
+      if (cpuCard[stat] > userCard[stat]) {
+        autoPick = stat;
+        break;
+      }
+    }
+
+    // Instantly trigger the round using the losing stat
+    handlePlayRound(autoPick);
+  }
+
   function handleStartGame() {
     const cleanedName = playerNameInput.trim();
 
@@ -273,8 +293,9 @@ export default function HomePage() {
             <h2 className="mt-4 text-3xl font-black uppercase text-white">One Quick Rule Check</h2>
             <p className="mt-4 text-sm leading-7 text-mist sm:text-base">
               Each round, you and the CPU are dealt one random player. Choose a stat: Strike
-              Rate, Boundary Rate, Average, or Impact. The higher stat wins the round. First to
-              10 points wins the match.
+              Rate, Boundary Rate, Average, or Impact. The higher stat wins the round. You
+              have 15 seconds to pick, or the CPU steals the point! First to 10 points wins
+              the match.
             </p>
             <button
               type="button"
@@ -358,7 +379,7 @@ export default function HomePage() {
                 A fast, stat-driven cricket card game powered by a decade of IPL batting data (2016-2025).
               </p>
               <p className="mt-2 max-w-xl text-xs leading-5 text-mist sm:text-sm">
-                Pick your stat, reveal the CPU card, and race to 10 round wins.
+                Pick your stat before the 15-second timer runs out, reveal the CPU card, and race to 10 round wins.
               </p>
                 </div>
               </div>
@@ -394,6 +415,7 @@ export default function HomePage() {
             achievements={achievements}
             onOpenPostcard={() => setShowPostcard(true)}
             onExitRequest={() => setShowExitConfirm(true)}
+            onTimeout={handleTimeout}
           />
         ) : (
           <section className="mx-auto flex min-h-[440px] w-full max-w-3xl items-center justify-center rounded-[32px] border border-white/10 bg-black/20 p-6 backdrop-blur md:p-10">
@@ -404,7 +426,7 @@ export default function HomePage() {
               </h2>
               <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-mist sm:text-base">
                 Start the match by naming your deck. Your name will appear during gameplay so the
-                battle feels personalized from the first round.
+                battle feels personalized from the first round. Get ready to think fast!
               </p>
 
               <div className="mx-auto mt-8 flex max-w-md flex-col gap-4">
