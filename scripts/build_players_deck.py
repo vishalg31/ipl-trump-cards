@@ -109,6 +109,7 @@ def load_display_name_overrides(file_path: Path = DISPLAY_NAME_OVERRIDES_PATH) -
         "MR Marsh": "Mitchell Marsh",
         "JJ Roy": "Jason Roy",
         "HM Amla": "Hashim Amla",
+        "A Raghuvanshi": "Angkrish Raghuvanshi",
     }
 
     if not file_path.exists():
@@ -333,6 +334,16 @@ def build_players_deck(
 
         for column in ["runs", "balls", "matches"]:
             final_frame[column] = final_frame[column].astype(int)
+
+        missing_overrides = final_frame[~final_frame["name"].isin(display_name_overrides.keys())]
+        if not missing_overrides.empty:
+            print("\n" + "="*60)
+            print("⚠️ WARNING: MISSING DISPLAY NAMES DETECTED!")
+            print("The following players are using raw Cricsheet names (initials).")
+            print("Add them to the overrides list or player_display_names.json to fix them:")
+            for raw_name in missing_overrides["name"]:
+                print(f'        "{raw_name}": "Replace Me",')
+            print("="*60 + "\n")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(final_frame.to_json(orient="records", indent=2), encoding="utf-8")
