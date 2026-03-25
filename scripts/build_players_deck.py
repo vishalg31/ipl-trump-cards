@@ -211,8 +211,9 @@ def aggregate_stats(parsed_rows: Iterable[dict], min_balls: int) -> pd.DataFrame
     if qualified.empty:
         return qualified
 
+    qualified["boundaries"] = qualified["fours"] + qualified["sixes"]
     qualified["strike_rate_raw"] = (qualified["runs"] / qualified["balls"]) * 100
-    qualified["boundary_rate_raw"] = (qualified["fours"] + qualified["sixes"]) / qualified["balls"]
+    qualified["boundary_rate_raw"] = qualified["boundaries"] / qualified["balls"]
     qualified["consistency_raw"] = qualified["runs"] / qualified["matches"]
 
     return qualified
@@ -315,6 +316,7 @@ def build_players_deck(
         "display_name",
         "runs",
         "balls",
+        "boundaries",
         "matches",
         "strike_rate_raw",
         "boundary_rate_raw",
@@ -332,7 +334,7 @@ def build_players_deck(
             ascending=[False, False, False, False],
         ).head(top_n)
 
-        for column in ["runs", "balls", "matches"]:
+        for column in ["runs", "balls", "boundaries", "matches"]:
             final_frame[column] = final_frame[column].astype(int)
 
         missing_overrides = final_frame[~final_frame["name"].isin(display_name_overrides.keys())]
@@ -361,7 +363,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
     parser.add_argument("--seasons", nargs="+", type=int, default=list(range(2016, 2026)))
-    parser.add_argument("--min-balls", type=int, default=300)
+    parser.add_argument("--min-balls", type=int, default=500)
     parser.add_argument("--top-n", type=int, default=50)
     parser.add_argument(
         "--max-files",

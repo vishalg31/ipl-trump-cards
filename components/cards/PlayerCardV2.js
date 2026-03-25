@@ -18,6 +18,14 @@ const statStyles = {
   "Impact Score": {
     base: "border-violet-300/20 bg-violet-400/10",
     active: "border-violet-300/70 bg-violet-300/16 shadow-[0_0_0_1px_rgba(196,181,253,0.2)]"
+  },
+  "Economy": {
+    base: "border-emerald-300/20 bg-emerald-400/10",
+    active: "border-emerald-300/70 bg-emerald-300/16 shadow-[0_0_0_1px_rgba(110,231,183,0.2)]"
+  },
+  "Dot Ball %": {
+    base: "border-cyan-300/20 bg-cyan-400/10",
+    active: "border-cyan-300/70 bg-cyan-300/16 shadow-[0_0_0_1px_rgba(34,211,238,0.2)]"
   }
 };
 
@@ -61,14 +69,18 @@ function formatRawStat(label, value) {
     return "--";
   }
 
-  if (label === "Boundary Rate") {
-    return `${Math.round(value * 100)}%`;
+  if (label === "Boundary Rate" || label === "Dot Ball %") {
+    return `${Math.round(label === "Boundary Rate" ? value * 100 : value)}%`;
+  }
+
+  if (label === "Economy") {
+    return value.toFixed(2);
   }
 
   return value.toFixed(1);
 }
 
-function AnimatedStatValue({ value, label, isImpact, shouldAnimate }) {
+function AnimatedStatValue({ value, label, isImpact, shouldAnimate, blindStats }) {
   const [displayValue, setDisplayValue] = useState(shouldAnimate ? 0 : value);
 
   useEffect(() => {
@@ -83,6 +95,10 @@ function AnimatedStatValue({ value, label, isImpact, shouldAnimate }) {
       setDisplayValue(value);
     }
   }, [value, shouldAnimate]);
+
+  if (blindStats) {
+    return <span className="tracking-widest opacity-60">???</span>;
+  }
 
   if (isImpact) {
     return <>{typeof displayValue === "number" ? Math.round(displayValue) : "--"}</>;
@@ -101,15 +117,25 @@ export default function PlayerCardV2({
   isSelectable = false,
   disabled = false,
   outcome = null,
-  burstKey = 0
+  burstKey = 0,
+  isBlindMode = false
 }) {
   const theme = cardThemes[variant] || cardThemes.user;
-  const items = [
-    { key: "strike_rate", label: "Strike Rate", value: stats?.strike_rate_raw },
-    { key: "boundary_rate", label: "Boundary Rate", value: stats?.boundary_rate_raw },
-    { key: "consistency", label: "Average", value: stats?.consistency_raw },
-    { key: "impact_score", label: "Impact Score", value: stats?.impact_score, isImpact: true }
-  ];
+  const isBowler = stats?.hasOwnProperty("economy_raw");
+
+  const items = isBowler
+    ? [
+        { key: "economy_raw", label: "Economy", value: stats?.economy_raw },
+        { key: "strike_rate_raw", label: "Strike Rate", value: stats?.strike_rate_raw },
+        { key: "dot_ball_percentage_raw", label: "Dot Ball %", value: stats?.dot_ball_percentage_raw },
+        { key: "impact_score", label: "Impact Score", value: stats?.impact_score, isImpact: true }
+      ]
+    : [
+        { key: "strike_rate_raw", label: "Strike Rate", value: stats?.strike_rate_raw },
+        { key: "boundary_rate_raw", label: "Boundary Rate", value: stats?.boundary_rate_raw },
+        { key: "consistency_raw", label: "Average", value: stats?.consistency_raw },
+        { key: "impact_score", label: "Impact Score", value: stats?.impact_score, isImpact: true }
+      ];
 
   return (
     <motion.article
@@ -122,7 +148,7 @@ export default function PlayerCardV2({
         outcome === "win" ? "card-win-pulse" : "",
         outcome === "loss" ? "card-loss-shake card-loss-dim" : "",
         outcome === "draw" ? "card-draw-flash" : "",
-        hidden && variant === "cpu" ? "h-[100px] rounded-[20px] sm:h-[540px] sm:rounded-[30px]" : "h-auto rounded-[20px] sm:h-[540px] sm:rounded-[30px]"
+        hidden && variant === "cpu" ? "h-[160px] rounded-[20px] sm:h-[540px] sm:rounded-[30px]" : "h-auto rounded-[20px] sm:h-[540px] sm:rounded-[30px]"
       ].join(" ")}
       style={{ transformStyle: "preserve-3d" }}
     >
@@ -139,18 +165,15 @@ export default function PlayerCardV2({
         className="relative z-10 h-full"
       >
         {hidden ? (
-          <div className={["flex h-full flex-row items-center justify-between rounded-[12px] border px-4 py-2 text-center sm:flex-col sm:justify-center sm:rounded-[24px] sm:p-0", theme.hiddenWrap].join(" ")}>
-            <div className="flex flex-col items-start text-left sm:items-center sm:text-center">
+          <div className={["flex h-full flex-col items-center justify-center gap-2 rounded-[16px] border px-4 py-4 text-center sm:gap-0 sm:rounded-[24px] sm:p-0", theme.hiddenWrap].join(" ")}>
+            <div className="flex flex-col items-center text-center">
               <div className={["rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.35em] sm:text-[11px]", theme.hiddenChip].join(" ")}>
                 Premium Pack
               </div>
-              <p className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-slate-200/90 sm:mt-5 sm:text-xs sm:font-normal sm:tracking-[0.3em] sm:text-slate-200/70">Hidden Card</p>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-widest text-slate-200/90 sm:mt-5 sm:text-xs sm:font-normal sm:tracking-[0.3em] sm:text-slate-200/70">Hidden Card</p>
             </div>
-            <div className={["mt-5 hidden h-32 w-24 items-center justify-center rounded-[22px] border sm:flex", theme.hiddenFrame].join(" ")}>
-              <div className={["h-20 w-14 rounded-[14px] border", theme.hiddenCore].join(" ")} />
-            </div>
-            <div className="flex h-12 w-9 items-center justify-center rounded-[8px] border border-white/10 bg-white/5 sm:hidden">
-              <div className="h-6 w-4 rounded-[4px] border border-white/10 bg-white/10" />
+            <div className={["mt-2 flex h-14 w-10 items-center justify-center rounded-[12px] border sm:mt-5 sm:h-32 sm:w-24 sm:rounded-[22px]", theme.hiddenFrame].join(" ")}>
+              <div className={["h-8 w-6 rounded-[6px] border sm:h-20 sm:w-14 sm:rounded-[14px]", theme.hiddenCore].join(" ")} />
             </div>
             <p className="hidden px-6 text-sm text-slate-300/70 sm:mt-3 sm:block">
               Reveals after your selection
@@ -202,13 +225,13 @@ export default function PlayerCardV2({
                       hideOnMobile,
                       "w-full flex-row items-center justify-between gap-3 rounded-[16px] border px-4 py-3 text-left transition-all duration-300 min-h-[56px] sm:min-h-[88px] sm:gap-4 sm:rounded-[22px] sm:px-4 sm:py-4",
                       outcomeStyle,
-                      isOther ? "opacity-30 grayscale blur-[2px] scale-[0.98]" : "opacity-100",
+                      isOther ? `grayscale scale-[0.98] ${isBlindMode ? "opacity-20 blur-[6px]" : "opacity-30 blur-[2px]"}` : "opacity-100",
                       isSelectable && !disabled
                         ? "cursor-pointer hover:border-white/35"
                         : "cursor-default"
                     ].join(" ")}
                   >
-                    <p className="text-[10px] uppercase tracking-[0.15em] text-slate-300/72 sm:text-[11px] sm:tracking-[0.22em]">
+                    <p className="text-xs uppercase tracking-[0.12em] text-slate-300/72 sm:text-[13px] sm:tracking-[0.18em]">
                       {item.label}
                     </p>
                     <p className="text-lg font-bold text-white sm:text-2xl">
@@ -217,6 +240,7 @@ export default function PlayerCardV2({
                         label={item.label}
                         isImpact={item.isImpact}
                         shouldAnimate={variant === "cpu" && !hidden && isSelected}
+                        blindStats={isBlindMode && !isSelected}
                       />
                     </p>
                   </motion.button>

@@ -2,13 +2,6 @@ import { motion } from "framer-motion";
 import PlayerCardV1 from "@/components/cards/PlayerCardV1";
 import RoundResult from "@/components/RoundResult";
 
-const statLabels = [
-  { key: "strike_rate", label: "Strike Rate" },
-  { key: "boundary_rate", label: "Boundary Rate" },
-  { key: "consistency", label: "Average" },
-  { key: "impact_score", label: "Impact Score" }
-];
-
 export default function GameBoardV1({
   playerName,
   userPlayer,
@@ -29,6 +22,21 @@ export default function GameBoardV1({
   const isFinalShowdown = userDeckCount === 9 && cpuDeckCount === 9;
   const isPlayerMatchPoint = !isFinalShowdown && userDeckCount === 9;
   const isCpuMatchPoint = !isFinalShowdown && cpuDeckCount === 9;
+
+  const isBowler = userPlayer?.hasOwnProperty("economy_raw");
+  const statLabels = isBowler
+    ? [
+        { key: "economy_raw", label: "Economy" },
+        { key: "strike_rate_raw", label: "Strike Rate" },
+        { key: "dot_ball_percentage_raw", label: "Dot Ball %" },
+        { key: "impact_score", label: "Impact Score" }
+      ]
+    : [
+        { key: "strike_rate_raw", label: "Strike Rate" },
+        { key: "boundary_rate_raw", label: "Boundary Rate" },
+        { key: "consistency_raw", label: "Average" },
+        { key: "impact_score", label: "Impact Score" }
+      ];
 
   return (
     <motion.section
@@ -57,6 +65,9 @@ export default function GameBoardV1({
           </div>
 
           <div className="flex flex-wrap justify-center gap-3 text-sm">
+            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 font-medium">
+              {isBowler ? "🥎 Bowlers" : "🏏 Batters"}
+            </div>
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
               {playerName}'s Score: {userDeckCount}
             </div>
@@ -74,13 +85,11 @@ export default function GameBoardV1({
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.02, 1] }}
             transition={{ duration: 0.45, ease: "easeOut" }}
-            className="mb-8 rounded-[24px] border border-emerald-300/35 bg-emerald-400/10 p-4 text-center animate-match-point-pulse-green"
+            className="mb-6 mx-auto flex max-w-fit items-center justify-center gap-3 rounded-full border border-emerald-300/35 bg-emerald-400/10 px-5 py-2.5 shadow-[0_0_20px_rgba(34,197,94,0.1)] animate-match-point-pulse-green"
           >
-            <p className="text-xs uppercase tracking-[0.34em] text-emerald-100/78">Momentum</p>
-            <h3 className="mt-2 text-2xl font-black uppercase tracking-[0.08em] text-white">
-              Match Point
-            </h3>
-            <p className="mt-2 text-sm text-emerald-100/82">1 point to victory.</p>
+            <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-300">Match Point</span>
+            <span className="h-3 w-px bg-emerald-300/30"></span>
+            <span className="text-xs font-medium text-emerald-100/90">1 point to victory</span>
           </motion.div>
         ) : null}
 
@@ -89,13 +98,11 @@ export default function GameBoardV1({
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.02, 1] }}
             transition={{ duration: 0.45, ease: "easeOut" }}
-            className="mb-8 rounded-[24px] border border-rose-300/35 bg-rose-400/10 p-4 text-center animate-match-point-pulse"
+            className="mb-6 mx-auto flex max-w-fit items-center justify-center gap-3 rounded-full border border-rose-300/35 bg-rose-400/10 px-5 py-2.5 shadow-[0_0_20px_rgba(251,113,133,0.1)] animate-match-point-pulse"
           >
-            <p className="text-xs uppercase tracking-[0.34em] text-rose-100/78">Warning</p>
-            <h3 className="mt-2 text-2xl font-black uppercase tracking-[0.08em] text-white">
-              CPU Match Point
-            </h3>
-            <p className="mt-2 text-sm text-rose-100/82">Danger! One more loss ends it.</p>
+            <span className="text-xs font-black uppercase tracking-[0.2em] text-rose-300">CPU Match Point</span>
+            <span className="h-3 w-px bg-rose-300/30"></span>
+            <span className="text-xs font-medium text-rose-100/90">Danger</span>
           </motion.div>
         ) : null}
 
@@ -104,12 +111,11 @@ export default function GameBoardV1({
             initial={{ opacity: 0, y: -12, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.03, 1] }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="mb-8 rounded-[24px] border border-fuchsia-300/35 bg-fuchsia-400/10 p-5 text-center animate-final-showdown"
+            className="mb-6 mx-auto flex max-w-fit items-center justify-center gap-3 rounded-full border border-fuchsia-300/35 bg-fuchsia-400/10 px-5 py-2.5 shadow-[0_0_24px_rgba(217,70,239,0.12)] animate-final-showdown"
           >
-            <p className="text-xs uppercase tracking-[0.38em] text-fuchsia-100/80">Deadlock</p>
-            <h3 className="mt-2 text-3xl font-black uppercase tracking-[0.08em] text-white">
-              Final Showdown
-            </h3>
+            <span className="text-xs font-black uppercase tracking-[0.2em] text-fuchsia-300">Final Showdown</span>
+            <span className="h-3 w-px bg-fuchsia-300/30"></span>
+            <span className="text-xs font-medium text-fuchsia-100/90">Deadlock</span>
           </motion.div>
         ) : null}
 
@@ -149,6 +155,11 @@ export default function GameBoardV1({
               <p className="text-center text-xs uppercase tracking-[0.24em] text-cyan-300/75">
                 Select A Stat
               </p>
+              {isBowler ? (
+                <p className="mt-2 text-center text-[11px] font-medium text-emerald-300/90">
+                  Tip: Lower Economy & Strike Rate wins!
+                </p>
+              ) : null}
 
               <div className="mt-4 grid gap-3">
                 {statLabels.map((stat) => {

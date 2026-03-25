@@ -34,7 +34,8 @@ export default function GameBoardV2({
   achievements,
   onOpenPostcard,
   onExitRequest,
-  onTimeout
+  onTimeout,
+  isBlindMode
 }) {
   const [showLossOverlay, setShowLossOverlay] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
@@ -69,6 +70,7 @@ export default function GameBoardV2({
   const isCpuMatchPoint = !isFinalShowdown && cpuDeckCount === 9;
   const isUserWin = userDeckCount >= targetScore;
   const showOverlay = finalChampion || showLossOverlay;
+  const isBowler = userPlayer?.hasOwnProperty("economy_raw");
 
   return (
     <motion.section
@@ -146,6 +148,14 @@ export default function GameBoardV2({
               </div>
             )}
             <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-semibold tracking-wide text-slate-100/85 sm:px-4 sm:py-2">
+              {isBowler ? "🥎 Bowlers" : "🏏 Batters"}
+            </div>
+            {isBlindMode ? (
+              <div className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1.5 font-semibold tracking-wide text-fuchsia-300 sm:px-4 sm:py-2">
+                🙈 Blind Mode
+              </div>
+            ) : null}
+            <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-semibold tracking-wide text-slate-100/85 sm:px-4 sm:py-2">
               Race to {targetScore} Points
             </div>
             {!gameOver ? (
@@ -165,15 +175,11 @@ export default function GameBoardV2({
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.02, 1] }}
             transition={{ duration: 0.45, ease: "easeOut" }}
-            className="mb-4 rounded-[20px] border border-emerald-300/35 bg-[linear-gradient(135deg,rgba(74,222,128,0.16),rgba(255,255,255,0.05),rgba(15,23,42,0.4))] p-3 text-center shadow-[0_0_36px_rgba(34,197,94,0.12)] animate-match-point-pulse-green sm:mb-8 sm:rounded-[26px] sm:p-4"
+            className="mb-4 sm:mb-6 mx-auto flex max-w-fit items-center justify-center gap-3 rounded-full border border-emerald-300/35 bg-[linear-gradient(135deg,rgba(74,222,128,0.16),rgba(255,255,255,0.05),rgba(15,23,42,0.4))] px-4 py-2 shadow-[0_0_24px_rgba(34,197,94,0.12)] animate-match-point-pulse-green sm:px-6 sm:py-2.5"
           >
-            <p className="text-[10px] uppercase tracking-[0.36em] text-emerald-100/78 sm:text-xs">Momentum</p>
-            <h3 className="mt-1 text-xl font-black uppercase tracking-[0.08em] text-white sm:mt-2 sm:text-3xl">
-              Match Point
-            </h3>
-            <p className="mt-1 text-xs text-emerald-50/82 sm:mt-2 sm:text-sm">
-              1 point to victory.
-            </p>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-200 sm:text-xs">Match Point</span>
+            <span className="h-3 w-px bg-emerald-300/30"></span>
+            <span className="text-[10px] font-medium text-emerald-50/90 sm:text-xs">1 point to victory</span>
           </motion.div>
         ) : null}
 
@@ -182,15 +188,11 @@ export default function GameBoardV2({
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.02, 1] }}
             transition={{ duration: 0.45, ease: "easeOut" }}
-            className="mb-4 rounded-[20px] border border-rose-300/35 bg-[linear-gradient(135deg,rgba(251,113,133,0.16),rgba(255,255,255,0.05),rgba(15,23,42,0.4))] p-3 text-center shadow-[0_0_36px_rgba(251,113,133,0.12)] animate-match-point-pulse sm:mb-8 sm:rounded-[26px] sm:p-4"
+            className="mb-4 sm:mb-6 mx-auto flex max-w-fit items-center justify-center gap-3 rounded-full border border-rose-300/35 bg-[linear-gradient(135deg,rgba(251,113,133,0.16),rgba(255,255,255,0.05),rgba(15,23,42,0.4))] px-4 py-2 shadow-[0_0_24px_rgba(251,113,133,0.12)] animate-match-point-pulse sm:px-6 sm:py-2.5"
           >
-            <p className="text-[10px] uppercase tracking-[0.36em] text-rose-100/78 sm:text-xs">Warning</p>
-            <h3 className="mt-1 text-xl font-black uppercase tracking-[0.08em] text-white sm:mt-2 sm:text-3xl">
-              CPU Match Point
-            </h3>
-            <p className="mt-1 text-xs text-rose-50/82 sm:mt-2 sm:text-sm">
-              Danger! One more loss ends the match.
-            </p>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-200 sm:text-xs">CPU Match Point</span>
+            <span className="h-3 w-px bg-rose-300/30"></span>
+            <span className="text-[10px] font-medium text-rose-50/90 sm:text-xs">Danger</span>
           </motion.div>
         ) : null}
 
@@ -199,19 +201,15 @@ export default function GameBoardV2({
             initial={{ opacity: 0, y: -12, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: [1, 1.03, 1] }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="mb-4 rounded-[22px] border border-fuchsia-300/35 bg-[linear-gradient(135deg,rgba(217,70,239,0.16),rgba(251,191,36,0.08),rgba(15,23,42,0.44))] p-4 text-center shadow-[0_0_42px_rgba(217,70,239,0.14)] animate-final-showdown sm:mb-8 sm:rounded-[28px] sm:p-5"
+            className="mb-4 sm:mb-6 mx-auto flex max-w-fit items-center justify-center gap-3 rounded-full border border-fuchsia-300/35 bg-[linear-gradient(135deg,rgba(217,70,239,0.16),rgba(251,191,36,0.08),rgba(15,23,42,0.44))] px-4 py-2 shadow-[0_0_32px_rgba(217,70,239,0.14)] animate-final-showdown sm:px-6 sm:py-2.5"
           >
-            <p className="text-[10px] uppercase tracking-[0.4em] text-fuchsia-100/80 sm:text-xs">Deadlock</p>
-            <h3 className="mt-1 text-xl font-black uppercase tracking-[0.08em] text-white sm:mt-2 sm:text-4xl">
-              Final Showdown
-            </h3>
-            <p className="mt-2 text-xs text-fuchsia-50/84 sm:mt-3 sm:text-base">
-              It all comes down to this round.
-            </p>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-fuchsia-200 sm:text-xs">Final Showdown</span>
+            <span className="h-3 w-px bg-fuchsia-300/30"></span>
+            <span className="text-[10px] font-medium text-fuchsia-50/90 sm:text-xs">Deadlock</span>
           </motion.div>
         ) : null}
 
-        <div className="relative flex flex-1 flex-col justify-center gap-3 sm:grid sm:gap-5 md:gap-3 md:grid-cols-[1fr_60px_1fr] lg:gap-5 lg:grid-cols-[22rem_200px_22rem] md:items-center md:justify-center">
+        <div className="relative flex flex-1 flex-col justify-center gap-3 sm:grid sm:gap-5 md:gap-3 md:grid-cols-[1fr_60px_1fr] lg:gap-6 lg:grid-cols-[24rem_160px_24rem] md:items-center md:justify-center">
           <AnimatePresence mode="popLayout">
             <motion.div
               key={`user-v2-${userPlayer?.name || "empty"}`}
@@ -221,7 +219,7 @@ export default function GameBoardV2({
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               className="order-1 flex w-full justify-center md:order-none md:justify-start"
             >
-            <div className="mx-auto flex w-full max-w-md flex-col lg:max-w-[22rem] lg:w-[22rem]">
+            <div className="mx-auto flex w-full max-w-md flex-col lg:max-w-[24rem] lg:w-[24rem]">
               <div className="mb-3 sm:mb-5">
                 <div className="mb-1.5 flex items-end justify-between sm:mb-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-cyan-300 sm:text-xs">{playerName}</span>
@@ -239,6 +237,11 @@ export default function GameBoardV2({
               <p className="mb-2 text-center text-[10px] uppercase tracking-[0.28em] text-slate-300/70 sm:mb-3 sm:text-xs md:text-left">
                 Tap A Stat On Your Card
               </p>
+              {isBowler ? (
+                <p className="mb-3 text-center text-[11px] font-medium text-emerald-300/90 sm:mb-4 sm:text-xs md:text-left">
+                  Tip: Lower Economy & Strike Rate wins!
+                </p>
+              ) : null}
               {userPlayer ? (
                 <PlayerCardV2
                   name={userPlayer.name}
@@ -252,6 +255,7 @@ export default function GameBoardV2({
                   disabled={isResolving || gameOver}
                   outcome={userCardOutcome}
                   burstKey={`user-${effectKey}`}
+                  isBlindMode={isBlindMode}
                 />
               ) : (
                 <div className="mx-auto flex h-[280px] w-full items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-xs text-slate-300/70 sm:h-auto sm:aspect-[65/100] sm:rounded-3xl sm:text-sm">
@@ -269,9 +273,9 @@ export default function GameBoardV2({
                   VS
                 </div>
 
-                <div className="hidden w-full max-w-[200px] rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(15,23,42,0.55))] px-5 py-6 text-center shadow-[0_18px_40px_rgba(15,23,42,0.28)] lg:block">
+                <div className="hidden w-full max-w-[160px] rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(15,23,42,0.55))] px-4 py-6 text-center shadow-[0_18px_40px_rgba(15,23,42,0.28)] lg:block">
                   <p className="text-[11px] uppercase tracking-[0.35em] text-amber-100/70">Matchup</p>
-                  <div className="mt-4 rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.14),rgba(255,255,255,0.05))] px-5 py-3 text-lg font-black uppercase tracking-[0.35em] text-amber-50">
+                  <div className="mt-4 rounded-full border border-amber-100/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.14),rgba(255,255,255,0.05))] px-4 py-3 text-base font-black uppercase tracking-[0.35em] text-amber-50">
                     VS
                   </div>
                   <p className="mt-4 text-xs uppercase tracking-[0.24em] text-slate-300/70">
@@ -316,6 +320,13 @@ export default function GameBoardV2({
                 >
                   Share Postcard
                 </button>
+                <button
+                  type="button"
+                  onClick={onExitRequest}
+                  className="mt-2 w-full rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-2.5 text-sm font-semibold text-rose-200 transition hover:bg-rose-500/20 sm:mt-3 sm:px-5 sm:py-3"
+                >
+                  Exit Game
+                </button>
               </div>
             ) : null}
           </div>
@@ -329,7 +340,7 @@ export default function GameBoardV2({
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               className="order-3 flex w-full justify-center md:order-none md:justify-end"
             >
-            <div className="mx-auto flex w-full max-w-md flex-col lg:max-w-[22rem] lg:w-[22rem]">
+            <div className="mx-auto flex w-full max-w-md flex-col lg:max-w-[24rem] lg:w-[24rem]">
               <div className="order-3 mt-3 sm:order-1 sm:mb-5 sm:mt-0">
                 <div className="mb-1.5 flex items-end justify-between sm:mb-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 sm:text-xs">CPU</span>
@@ -347,6 +358,11 @@ export default function GameBoardV2({
               <p className="order-1 mb-2 text-center text-[10px] uppercase tracking-[0.28em] text-slate-300/70 sm:order-2 sm:mb-3 sm:text-xs md:text-left">
                 CPU Card
               </p>
+              {isBowler ? (
+                <p className="order-1 mb-3 hidden text-center text-[11px] font-medium opacity-0 pointer-events-none select-none sm:order-2 sm:mb-4 sm:text-xs md:block md:text-left">
+                  Tip: Lower Economy & Strike Rate wins!
+                </p>
+              ) : null}
               <motion.div
                 className="order-2 sm:order-3"
                 animate={{ opacity: cpuRevealed ? 1 : 1 }}
@@ -362,6 +378,7 @@ export default function GameBoardV2({
                     selectedStat={selectedStat}
                     outcome={cpuCardOutcome}
                     burstKey={`cpu-${effectKey}`}
+                    isBlindMode={isBlindMode}
                   />
                 ) : (
                   <div className="mx-auto flex h-[100px] w-full items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-xs text-slate-300/70 sm:h-auto sm:aspect-[65/100] sm:rounded-3xl sm:text-sm">

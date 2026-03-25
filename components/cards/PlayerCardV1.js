@@ -16,6 +16,14 @@ const statStyles = {
   "Impact Score": {
     base: "border-violet-300/20 bg-violet-400/10",
     active: "border-violet-300/70 bg-violet-300/16"
+  },
+  "Economy": {
+    base: "border-emerald-300/20 bg-emerald-400/10",
+    active: "border-emerald-300/70 bg-emerald-300/16"
+  },
+  "Dot Ball %": {
+    base: "border-cyan-300/20 bg-cyan-400/10",
+    active: "border-cyan-300/70 bg-cyan-300/16"
   }
 };
 
@@ -24,8 +32,12 @@ function formatRawStat(label, value) {
     return "--";
   }
 
-  if (label === "Boundary Rate") {
-    return `${Math.round(value * 100)}%`;
+  if (label === "Boundary Rate" || label === "Dot Ball %") {
+    return `${Math.round(label === "Boundary Rate" ? value * 100 : value)}%`;
+  }
+
+  if (label === "Economy") {
+    return value.toFixed(2);
   }
 
   return value.toFixed(1);
@@ -38,12 +50,21 @@ export default function PlayerCardV1({
   highlighted = false,
   selectedStat = null
 }) {
-  const items = [
-    { key: "strike_rate", label: "Strike Rate", value: stats?.strike_rate_raw },
-    { key: "boundary_rate", label: "Boundary Rate", value: stats?.boundary_rate_raw },
-    { key: "consistency", label: "Average", value: stats?.consistency_raw },
-    { key: "impact_score", label: "Impact Score", value: stats?.impact_score, isImpact: true }
-  ];
+  const isBowler = stats?.hasOwnProperty("economy_raw");
+
+  const items = isBowler
+    ? [
+        { key: "economy_raw", label: "Economy", value: stats?.economy_raw },
+        { key: "strike_rate_raw", label: "Strike Rate", value: stats?.strike_rate_raw },
+        { key: "dot_ball_percentage_raw", label: "Dot Ball %", value: stats?.dot_ball_percentage_raw },
+        { key: "impact_score", label: "Impact Score", value: stats?.impact_score, isImpact: true }
+      ]
+    : [
+        { key: "strike_rate_raw", label: "Strike Rate", value: stats?.strike_rate_raw },
+        { key: "boundary_rate_raw", label: "Boundary Rate", value: stats?.boundary_rate_raw },
+        { key: "consistency_raw", label: "Average", value: stats?.consistency_raw },
+        { key: "impact_score", label: "Impact Score", value: stats?.impact_score, isImpact: true }
+      ];
 
   return (
     <motion.article
@@ -94,7 +115,7 @@ export default function PlayerCardV1({
                     statStyles[item.label][selectedStat === item.key ? "active" : "base"]
                   ].join(" ")}
                 >
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                  <p className="text-xs uppercase tracking-[0.15em] text-slate-400">
                     {item.label}
                   </p>
                   <p className="text-2xl font-semibold text-white">

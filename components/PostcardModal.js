@@ -19,7 +19,8 @@ export default function PostcardModal({
   winnerMessage,
   userDeckCount,
   cpuDeckCount,
-  achievements
+  achievements,
+  deckMode = "batters"
 }) {
   const cardRef = useRef(null);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -75,15 +76,20 @@ export default function PostcardModal({
 
   const activeTheme = themes[outcomeKey];
   const shareUrl = "https://cricket.vishalbuilds.com/ipl-trump-cards";
-  const shareText = `I just played IPL Trump Cards! ${activeTheme.subtitle}\n\nCan you beat my score? Play here:`;
+  const shareText = `I just played IPL Trump Cards (${deckMode === "bowlers" ? "Bowlers" : "Batters"} Edition)! ${activeTheme.subtitle}\n\nCan you beat my score? Play here:`;
+
+  const formattedBiggestMargin =
+    achievements.biggestStatWin.margin > 0
+      ? Number(achievements.biggestStatWin.margin.toFixed(2))
+      : 0;
 
   const achievementBadges = [
     `🔥 On Fire: ${
       achievements.bestWinStreak > 0 ? `${achievements.bestWinStreak} Win Streak` : "Not Yet"
     }`,
     `💥 Biggest Hit: ${
-      achievements.biggestStatWin.margin > 0
-        ? `+${achievements.biggestStatWin.margin} ${achievements.biggestStatWin.statLabel}`
+      formattedBiggestMargin > 0
+        ? `+${formattedBiggestMargin} ${achievements.biggestStatWin.statLabel}`
         : "Not Yet"
     }`,
     `🎯 Comeback King: ${
@@ -181,9 +187,14 @@ export default function PostcardModal({
                   className={`flex w-full max-w-[760px] flex-col gap-4 rounded-[32px] border border-white/10 ${activeTheme.bgGradient} p-4 text-white shadow-[0_28px_80px_rgba(15,23,42,0.52)] sm:p-6`}
                 >
                   <div className="flex flex-col gap-3 rounded-[26px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.26),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.22),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.28))] p-5 text-center sm:p-7">
-                    <p className="text-[11px] uppercase tracking-[0.42em] text-amber-100/75">
-                      IPL Trump Cards
-                    </p>
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.42em] text-amber-100/75">
+                        IPL Trump Cards
+                      </p>
+                      <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-white/90">
+                        {deckMode === "bowlers" ? "🥎 Bowlers" : "🏏 Batters"}
+                      </span>
+                    </div>
                     <h2 className="text-4xl font-black uppercase leading-none text-white sm:text-6xl" style={{ textShadow: `0 0 24px ${activeTheme.glow}` }}>
                       {activeTheme.title}
                     </h2>
